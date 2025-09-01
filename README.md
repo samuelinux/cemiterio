@@ -51,8 +51,8 @@ git add . && git commit -m "Pequenas mudanças" && git push
 
 ```
 ### Acesso
-- **Admin**: http://localhost:8000/admin/login
-- **Empresa**: http://localhost:8000/{slug-empresa}/login
+- **Admin**: http://localhost/admin/login
+- **Empresa**: http://localhost/{slug-empresa}/login
 
 ## 📋 Credenciais de Teste
 
