@@ -13,4 +13,11 @@ class EmpresaController extends Controller
         // Por enquanto, vamos apenas retornar uma view simples
         return view("admin.empresas.index");
     }
+
+    public function create()
+{
+    // Retorna a view de criação de empresa
+    return view('admin.empresas.create');
+}
+
 }
