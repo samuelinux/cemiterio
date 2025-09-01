@@ -4,12 +4,10 @@ namespace App\Livewire\Admin;
 
 use App\Models\Empresa;
 use Livewire\Component;
-use Jantinnerezo\LivewireAlert\LivewireAlert;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 
 class EmpresaForm extends Component
 {
-    use LivewireAlert;
-
     public $empresaId;
     public $nome = '';
     public $email = '';
@@ -53,7 +51,7 @@ class EmpresaForm extends Component
     public function loadEmpresa()
     {
         $empresa = Empresa::findOrFail($this->empresaId);
-        
+
         $this->nome = $empresa->nome;
         $this->email = $empresa->email;
         $this->telefone = $empresa->telefone;
@@ -84,10 +82,23 @@ class EmpresaForm extends Component
         if ($this->isEditing) {
             $empresa = Empresa::findOrFail($this->empresaId);
             $empresa->update($data);
-            $this->alert('success', 'Empresa atualizada com sucesso!');
+
+            LivewireAlert::title('Sucesso!')
+                ->text('Empresa atualizada com sucesso!')
+                ->success()
+                ->position('center')
+                ->timer(2500)
+                ->show();
         } else {
             Empresa::create($data);
-            $this->alert('success', 'Empresa criada com sucesso!');
+
+            LivewireAlert::title('Sucesso!')
+                ->text('Empresa criada com sucesso!')
+                ->success()
+                ->position('center')
+                ->timer(2500)
+                ->show();
+
             $this->reset();
         }
     }
