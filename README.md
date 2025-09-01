@@ -10,9 +10,13 @@ composer install
 cp .env.example .env
 php artisan key:generate
 php artisan migrate:fresh --seed
-php artisan serve
 ```
 
+## Em WSL
+```bash
+sudo chown -R www-data:www-data storage bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
+```
 ### Acesso
 - **Admin**: http://localhost:8000/admin/login
 - **Empresa**: http://localhost:8000/{slug-empresa}/login
