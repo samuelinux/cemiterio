@@ -17,6 +17,43 @@ php artisan migrate:fresh --seed
 sudo chown -R www-data:www-data storage bootstrap/cache
 sudo chmod -R 775 storage bootstrap/cache
 ```
+
+### Entrar em Container DOCKER
+```bash
+docker exec -it sistema_de_agendamento-app bash
+```
+
+### Erro de Banco de Dados
+```bash
+php artisan migrate:fresh --seed
+```
+
+### Erro de Cache
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+
+php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan route:clear
+```
+
+### Parar de pedir senha ssh
+```bash
+eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_ed25519
+echo 'eval "$(ssh-agent -s)" > /dev/null && ssh-add -q ~/.ssh/id_ed25519 2>/dev/null || true' | tee -a ~/.zshrc ~/.bashrc
+```
+
+### Resetar mudanças Locais
+```bash
+git reset --hard origin/$(git rev-parse --abbrev-ref HEAD) && git clean -fd && git pull
+
+```
+
+### Faça backup das mudanças
+```bash
+git add . && git commit -m "Pequenas mudanças" && git push
+
+```
 ### Acesso
 - **Admin**: http://localhost:8000/admin/login
 - **Empresa**: http://localhost:8000/{slug-empresa}/login
