@@ -4,16 +4,15 @@ namespace App\Livewire\Empresa;
 
 use App\Models\Sepultamento;
 use App\Traits\HasPermissions;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
-use Jantinnerezo\LivewireAlert\LivewireAlert;
+use Livewire\Component;
 
 class SepultamentoForm extends Component
 {
-    use LivewireAlert, HasPermissions;
+    use HasPermissions;
 
     public $sepultamentoId;
-    
+
     // Dados do falecido
     public $nome_falecido = '';
     public $cpf_falecido = '';
@@ -24,7 +23,7 @@ class SepultamentoForm extends Component
     public $profissao = '';
     public $estado_civil = '';
     public $sexo = '';
-    
+
     // Dados do sepultamento
     public $data_sepultamento = '';
     public $hora_sepultamento = '';
@@ -33,18 +32,18 @@ class SepultamentoForm extends Component
     public $gaveta = '';
     public $numero_sepultura = '';
     public $tipo_sepultamento = 'inumacao';
-    
+
     // Dados do responsável
     public $nome_responsavel = '';
     public $cpf_responsavel = '';
     public $telefone_responsavel = '';
     public $parentesco = '';
-    
+
     // Documentação
     public $numero_certidao_obito = '';
     public $cartorio_certidao = '';
     public $numero_declaracao_obito = '';
-    
+
     // Observações
     public $observacoes = '';
 
@@ -96,7 +95,7 @@ class SepultamentoForm extends Component
         } else {
             $this->checkPermission('sepultamentos', 'cadastrar');
         }
-        
+
         // Definir data padrão como hoje
         if (!$this->data_sepultamento) {
             $this->data_sepultamento = now()->format('Y-m-d');
@@ -107,14 +106,14 @@ class SepultamentoForm extends Component
     {
         $sepultamento = Sepultamento::where('empresa_id', Auth::user()->empresa_id)
             ->findOrFail($this->sepultamentoId);
-        
+
         // Carregar todos os campos
         foreach ($this->rules as $field => $rule) {
             if (property_exists($this, $field)) {
                 $this->$field = $sepultamento->$field;
             }
         }
-        
+
         // Formatar datas
         $this->data_nascimento = $sepultamento->data_nascimento?->format('Y-m-d');
         $this->data_falecimento = $sepultamento->data_falecimento?->format('Y-m-d');
@@ -132,7 +131,7 @@ class SepultamentoForm extends Component
                 $data[$field] = $this->$field;
             }
         }
-        
+
         $data['empresa_id'] = Auth::user()->empresa_id;
         $data['user_id'] = Auth::id();
 

@@ -4,7 +4,6 @@ namespace App\Livewire\Admin;
 
 use App\Models\Empresa;
 use Livewire\Component;
-use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 
 class EmpresaForm extends Component
 {
@@ -82,22 +81,8 @@ class EmpresaForm extends Component
         if ($this->isEditing) {
             $empresa = Empresa::findOrFail($this->empresaId);
             $empresa->update($data);
-
-            LivewireAlert::title('Sucesso!')
-                ->text('Empresa atualizada com sucesso!')
-                ->success()
-                ->position('center')
-                ->timer(2500)
-                ->show();
         } else {
             Empresa::create($data);
-
-            LivewireAlert::title('Sucesso!')
-                ->text('Empresa criada com sucesso!')
-                ->success()
-                ->position('center')
-                ->timer(2500)
-                ->show();
 
             $this->reset();
         }

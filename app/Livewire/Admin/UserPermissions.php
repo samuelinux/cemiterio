@@ -5,11 +5,11 @@ namespace App\Livewire\Admin;
 use App\Models\User;
 use App\Models\Permissao;
 use Livewire\Component;
-use Jantinnerezo\LivewireAlert\LivewireAlert;
+
 
 class UserPermissions extends Component
 {
-    use LivewireAlert;
+    
 
     public $userId;
     public $user;

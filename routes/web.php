@@ -1,13 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AdminLoginController;
-use App\Http\Controllers\Auth\EmpresaLoginController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\EmpresaController as AdminEmpresaController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Auth\AdminLoginController;
+use App\Http\Controllers\Auth\EmpresaLoginController;
 use App\Http\Controllers\Empresa\DashboardController;
 use App\Http\Controllers\Empresa\SepultamentoController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,14 +31,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('login', [AdminLoginController::class, 'showLoginForm'])->name('login');
     Route::post('login', [AdminLoginController::class, 'login']);
     Route::post('logout', [AdminLoginController::class, 'logout'])->name('logout');
-    
+
     // Rotas protegidas por middleware admin
     Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-        
+
         // Gestão de empresas
         Route::resource('empresas', AdminEmpresaController::class);
-        
+
         // Gestão de utilizadores
         Route::resource('users', AdminUserController::class);
         Route::get('users/{user}/permissions', [AdminUserController::class, 'permissions'])->name('users.permissions');
@@ -52,11 +52,11 @@ Route::prefix('{empresa}')->name('empresa.')->group(function () {
     Route::get('login', [EmpresaLoginController::class, 'showLoginForm'])->name('login');
     Route::post('login', [EmpresaLoginController::class, 'login']);
     Route::post('logout', [EmpresaLoginController::class, 'logout'])->name('logout');
-    
+
     // Rotas protegidas por middleware empresa
     Route::middleware(['auth', 'empresa'])->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        
+
         // Gestão de sepultamentos
         Route::resource('sepultamentos', SepultamentoController::class);
     });

@@ -4,14 +4,14 @@ namespace App\Livewire\Empresa;
 
 use App\Models\Sepultamento;
 use App\Traits\HasPermissions;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
-use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 class SepultamentosList extends Component
 {
-    use WithPagination, LivewireAlert, HasPermissions;
+    use WithPagination;
+    use HasPermissions;
 
     public $search = '';
     public $perPage = 10;
@@ -70,11 +70,11 @@ class SepultamentosList extends Component
     public function delete($sepultamentoId)
     {
         $this->checkPermission('sepultamentos', 'excluir');
-        
+
         $sepultamento = Sepultamento::where('empresa_id', Auth::user()->empresa_id)
             ->findOrFail($sepultamentoId);
         $sepultamento->delete();
-        
+
         $this->alert('success', 'Sepultamento excluído com sucesso!');
     }
 
@@ -85,11 +85,11 @@ class SepultamentosList extends Component
             ->with(['user'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('nome_falecido', 'like', '%' . $this->search . '%')
-                      ->orWhere('cpf_falecido', 'like', '%' . $this->search . '%')
-                      ->orWhere('nome_responsavel', 'like', '%' . $this->search . '%')
-                      ->orWhere('local_sepultamento', 'like', '%' . $this->search . '%')
-                      ->orWhere('numero_sepultura', 'like', '%' . $this->search . '%');
+                    $q->where('nome_falecido', 'like', '%'.$this->search.'%')
+                      ->orWhere('cpf_falecido', 'like', '%'.$this->search.'%')
+                      ->orWhere('nome_responsavel', 'like', '%'.$this->search.'%')
+                      ->orWhere('local_sepultamento', 'like', '%'.$this->search.'%')
+                      ->orWhere('numero_sepultura', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->filterDataInicio, function ($query) {

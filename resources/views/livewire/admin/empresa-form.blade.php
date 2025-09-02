@@ -1,4 +1,4 @@
-<div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
+<div >
     <form wire:submit.prevent="save" class="space-y-6">
 
         {{-- Nome --}}

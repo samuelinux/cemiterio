@@ -5,11 +5,10 @@ namespace App\Livewire\Admin;
 use App\Models\Empresa;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 class EmpresasList extends Component
 {
-    use WithPagination, LivewireAlert;
+    use WithPagination;
 
     public $search = '';
     public $perPage = 10;
@@ -37,7 +36,7 @@ class EmpresasList extends Component
     {
         $empresa = Empresa::findOrFail($empresaId);
         $empresa->update(['ativo' => !$empresa->ativo]);
-        
+
         $status = $empresa->ativo ? 'ativada' : 'desativada';
         $this->alert('success', "Empresa {$status} com sucesso!");
     }
@@ -46,7 +45,7 @@ class EmpresasList extends Component
     {
         $empresa = Empresa::findOrFail($empresaId);
         $empresa->delete();
-        
+
         $this->alert('success', 'Empresa excluída com sucesso!');
     }
 
@@ -54,9 +53,9 @@ class EmpresasList extends Component
     {
         $empresas = Empresa::query()
             ->when($this->search, function ($query) {
-                $query->where('nome', 'like', '%' . $this->search . '%')
-                      ->orWhere('email', 'like', '%' . $this->search . '%')
-                      ->orWhere('cnpj', 'like', '%' . $this->search . '%');
+                $query->where('nome', 'like', '%'.$this->search.'%')
+                      ->orWhere('email', 'like', '%'.$this->search.'%')
+                      ->orWhere('cnpj', 'like', '%'.$this->search.'%');
             })
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);

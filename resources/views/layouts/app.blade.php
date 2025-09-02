@@ -11,9 +11,6 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Alpine.js -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
     <!-- Livewire Styles -->
     @livewireStyles
 
@@ -30,8 +27,9 @@
     </div>
 
     @livewireScripts
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @livewireAlertScripts
+    <script src="{{ asset('js/sweetAlert2.js') }}"></script>
+
+
 
 </body>
 
