@@ -27,7 +27,7 @@
     <div class="mb-4 grid grid-cols-1 md:grid-cols-4 gap-3">
         <div class="md:col-span-2">
             <input type="text" placeholder="Pesquisar (nome, e-mail, cidade, estado)..."
-                wire:model.debounce.500ms="search"
+                wire:model.live="search"
                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500">
         </div>
 
