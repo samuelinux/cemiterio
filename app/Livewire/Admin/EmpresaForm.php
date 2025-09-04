@@ -64,27 +64,38 @@ class EmpresaForm extends Component
 
     public function save()
     {
-        $this->validate();
+        try {
+            $this->validate();
 
-        $data = [
-            'nome' => $this->nome,
-            'email' => $this->email,
-            'telefone' => $this->telefone,
-            'endereco' => $this->endereco,
-            'cidade' => $this->cidade,
-            'estado' => $this->estado,
-            'cep' => $this->cep,
-            'cnpj' => $this->cnpj,
-            'ativo' => $this->ativo,
-        ];
+            $data = [
+                'nome' => $this->nome,
+                'slug' => Empresa::generateUniqueSlug($this->nome),
+                'email' => $this->email,
+                'telefone' => $this->telefone,
+                'endereco' => $this->endereco,
+                'cidade' => $this->cidade,
+                'estado' => $this->estado,
+                'cep' => $this->cep,
+                'cnpj' => $this->cnpj,
+                'ativo' => $this->ativo,
+            ];
 
-        if ($this->isEditing) {
-            $empresa = Empresa::findOrFail($this->empresaId);
-            $empresa->update($data);
-        } else {
-            Empresa::create($data);
-
-            $this->reset();
+            if ($this->isEditing) {
+                $empresa = Empresa::findOrFail($this->empresaId);
+                $empresa->update($data);
+                $this->dispatch('toast', type: 'success', title: 'Empresa atualizada!');
+            } else {
+                Empresa::create($data);
+                $this->reset();
+                $this->dispatch('toast', type: 'success', title: 'Empresa criada!');
+            }
+        } catch (\Throwable $e) {
+            report($e);
+            $this->dispatch('swal',
+                type: 'error',
+                title: 'Falha ao salvar',
+                text: app()->isLocal() ? $e->getMessage() : 'Erro inesperado.'
+            );
         }
     }
 

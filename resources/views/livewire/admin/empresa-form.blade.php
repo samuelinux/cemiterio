@@ -1,4 +1,26 @@
-<div >
+<div 
+x-data 
+    @swal.window="
+        Swal.fire({
+            icon: $event.detail.type || 'info',
+            title: $event.detail.title || 'Atenção',
+            text: $event.detail.text || undefined,
+            html: $event.detail.html || undefined,
+            showConfirmButton: $event.detail.showConfirmButton ?? true,
+            timer: $event.detail.timer || undefined,
+            timerProgressBar: !!$event.detail.timer
+        })
+    "
+    @toast.window="
+        const T = Swal.mixin({
+            toast: true, position: 'top-end',
+            showConfirmButton: false, timer: 3500, timerProgressBar: true
+        });
+        T.fire({
+            icon: $event.detail.type || 'info',
+            title: $event.detail.title || ''
+        })
+    ">
     <form wire:submit.prevent="save" class="space-y-6">
 
         {{-- Nome --}}
