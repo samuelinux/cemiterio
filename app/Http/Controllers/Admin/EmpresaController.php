@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Empresa;
 
 class EmpresaController extends Controller
 {
@@ -15,5 +16,10 @@ class EmpresaController extends Controller
     {
         // Retorna a view de criação de empresa
         return view('admin.empresas.create');
+    }
+
+    public function edit(Empresa $empresa)
+    {
+        return view('admin.empresas.edit', compact('empresa'));
     }
 }
