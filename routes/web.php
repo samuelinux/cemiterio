@@ -48,6 +48,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 // Rotas de autenticação para Empresa
 Route::prefix('{empresa}')->name('empresa.')->group(function () {
+
+    Route::get('/', function ($empresa) {
+        return redirect()->route('empresa.login', ['empresa' => $empresa]);
+    })->name('home');
+    
     // Login
     Route::get('login', [EmpresaLoginController::class, 'showLoginForm'])->name('login');
     Route::post('login', [EmpresaLoginController::class, 'login']);
@@ -59,5 +64,9 @@ Route::prefix('{empresa}')->name('empresa.')->group(function () {
 
         // Gestão de sepultamentos
         Route::resource('sepultamentos', SepultamentoController::class);
+    });
+
+    Route::fallback(function ($empresa) {
+        return redirect()->route('empresa.login', ['empresa' => $empresa]);
     });
 });
