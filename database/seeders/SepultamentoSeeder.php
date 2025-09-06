@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Sepultamento;
 use App\Models\Empresa;
+use App\Models\Sepultamento;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SepultamentoSeeder extends Seeder
@@ -18,100 +17,97 @@ class SepultamentoSeeder extends Seeder
         $empresas = Empresa::where('ativo', true)->get();
 
         foreach ($empresas as $empresa) {
+            // apenas usuários ativos da empresa para atribuir como "criador"
             $users = User::where('empresa_id', $empresa->id)
-                         ->where('ativo', true)
-                         ->get();
+                ->where('ativo', true)
+                ->get();
 
-            if ($users->isEmpty()) continue;
+            if ($users->isEmpty()) {
+                // se não houver usuários ativos, pule esta empresa
+                continue;
+            }
 
-            // Criar sepultamentos de exemplo
-            $sepultamentos = [
+            // Exemplos simples (datas em YYYY-MM-DD)
+            $dados = [
                 [
-                    'nome_falecido' => 'João Silva Santos',
-                    'cpf_falecido' => '123.456.789-00',
-                    'data_nascimento' => '1945-03-15',
-                    'data_falecimento' => now()->subDays(2)->format('Y-m-d'),
-                    'causa_morte' => 'Causas naturais',
-                    'naturalidade' => 'São Paulo, SP',
-                    'profissao' => 'Aposentado',
-                    'estado_civil' => 'casado',
-                    'sexo' => 'masculino',
+                    'nome_falecido'     => 'João Silva Santos',
+                    'mae'               => 'Maria Silva',
+                    'pai'               => 'José Santos',
+                    'indigente'         => false,
+                    'natimorto'         => false,
+                    'translado'         => false,
+                    'membro'            => true,
+                    'data_falecimento'  => now()->subDays(2)->format('Y-m-d'),
                     'data_sepultamento' => now()->subDay()->format('Y-m-d'),
-                    'hora_sepultamento' => '14:00',
-                    'local_sepultamento' => 'Cemitério Central',
-                    'quadra' => 'A',
-                    'gaveta' => '1',
-                    'numero_sepultura' => 'A-001',
-                    'tipo_sepultamento' => 'inumacao',
-                    'nome_responsavel' => 'Maria Silva Santos',
-                    'cpf_responsavel' => '987.654.321-00',
-                    'telefone_responsavel' => '(11) 99999-1234',
-                    'parentesco' => 'Esposa',
-                    'numero_certidao_obito' => 'CO-2024-001',
-                    'cartorio_certidao' => '1º Cartório de Registro Civil',
-                    'numero_declaracao_obito' => 'DO-2024-001',
-                    'observacoes' => 'Sepultamento realizado conforme tradição familiar.',
+                    'quadra'            => 'A',
+                    'fila'              => '1',
+                    'cova'              => '10',
+                    // ano_referencia e numero_sepultamento serão definidos pelo Model (booted)
+                    'certidao_obito_path' => null,
+                    'observacoes'         => 'Sepultamento realizado no período da tarde.',
+                    'ativo'               => true,
                 ],
                 [
-                    'nome_falecido' => 'Ana Maria Oliveira',
-                    'cpf_falecido' => '456.789.123-00',
-                    'data_nascimento' => '1960-07-22',
-                    'data_falecimento' => now()->format('Y-m-d'),
-                    'causa_morte' => 'Complicações cardíacas',
-                    'naturalidade' => 'Rio de Janeiro, RJ',
-                    'profissao' => 'Professora',
-                    'estado_civil' => 'viuvo',
-                    'sexo' => 'feminino',
+                    'nome_falecido'     => 'Ana Maria Oliveira',
+                    'mae'               => 'Cláudia Oliveira',
+                    'pai'               => 'Carlos Oliveira',
+                    'indigente'         => false,
+                    'natimorto'         => false,
+                    'translado'         => false,
+                    'membro'            => false,
+                    'data_falecimento'  => now()->format('Y-m-d'),
                     'data_sepultamento' => now()->addDay()->format('Y-m-d'),
-                    'hora_sepultamento' => '10:00',
-                    'local_sepultamento' => 'Cemitério Municipal',
-                    'quadra' => 'B',
-                    'gaveta' => '2',
-                    'numero_sepultura' => 'B-045',
-                    'tipo_sepultamento' => 'inumacao',
-                    'nome_responsavel' => 'Carlos Oliveira Filho',
-                    'cpf_responsavel' => '321.654.987-00',
-                    'telefone_responsavel' => '(21) 88888-5678',
-                    'parentesco' => 'Filho',
-                    'numero_certidao_obito' => 'CO-2024-002',
-                    'cartorio_certidao' => '2º Cartório de Registro Civil',
-                    'numero_declaracao_obito' => 'DO-2024-002',
-                    'observacoes' => 'Família solicitou cerimônia religiosa.',
+                    'quadra'            => 'B',
+                    'fila'              => '2',
+                    'cova'              => '45',
+                    'certidao_obito_path' => null,
+                    'observacoes'         => 'Família solicitou cerimônia religiosa.',
+                    'ativo'               => true,
                 ],
                 [
-                    'nome_falecido' => 'Pedro Costa Lima',
-                    'cpf_falecido' => '789.123.456-00',
-                    'data_nascimento' => '1938-12-10',
-                    'data_falecimento' => now()->subDays(5)->format('Y-m-d'),
-                    'causa_morte' => 'Idade avançada',
-                    'naturalidade' => 'Belo Horizonte, MG',
-                    'profissao' => 'Comerciante',
-                    'estado_civil' => 'solteiro',
-                    'sexo' => 'masculino',
+                    'nome_falecido'     => 'Pedro Costa Lima',
+                    'mae'               => 'Helena Costa',
+                    'pai'               => 'Antônio Lima',
+                    'indigente'         => false,
+                    'natimorto'         => false,
+                    'translado'         => true,   // exemplo com translado
+                    'membro'            => false,
+                    'data_falecimento'  => now()->subDays(5)->format('Y-m-d'),
                     'data_sepultamento' => now()->subDays(3)->format('Y-m-d'),
-                    'hora_sepultamento' => '16:30',
-                    'local_sepultamento' => 'Cemitério da Saudade',
-                    'quadra' => 'C',
-                    'gaveta' => '3',
-                    'numero_sepultura' => 'C-078',
-                    'tipo_sepultamento' => 'cremacao',
-                    'nome_responsavel' => 'José Costa Lima',
-                    'cpf_responsavel' => '654.321.987-00',
-                    'telefone_responsavel' => '(31) 77777-9012',
-                    'parentesco' => 'Irmão',
-                    'numero_certidao_obito' => 'CO-2024-003',
-                    'cartorio_certidao' => '3º Cartório de Registro Civil',
-                    'numero_declaracao_obito' => 'DO-2024-003',
-                    'observacoes' => 'Cremação conforme vontade expressa do falecido.',
+                    'quadra'            => 'C',
+                    'fila'              => '3',
+                    'cova'              => '78',
+                    'certidao_obito_path' => null,
+                    'observacoes'         => 'Translado autorizado pela família.',
+                    'ativo'               => true,
                 ],
             ];
 
-            foreach ($sepultamentos as $sepultamentoData) {
-                $sepultamentoData['empresa_id'] = $empresa->id;
-                $sepultamentoData['user_id'] = $users->random()->id;
-                
-                Sepultamento::create($sepultamentoData);
+            foreach ($dados as $row) {
+                $row['empresa_id'] = $empresa->id;
+                $row['user_id']    = $users->random()->id;
+
+                Sepultamento::create($row);
             }
+
+            // (Opcional) exemplo de registro desativado/soft-deleted para testes:
+            // $desativado = Sepultamento::create([
+            //     'empresa_id'         => $empresa->id,
+            //     'user_id'            => $users->random()->id,
+            //     'nome_falecido'      => 'Registro Desativado',
+            //     'indigente'          => true,
+            //     'natimorto'          => false,
+            //     'translado'          => false,
+            //     'membro'             => false,
+            //     'data_falecimento'   => now()->subDays(10)->format('Y-m-d'),
+            //     'data_sepultamento'  => now()->subDays(9)->format('Y-m-d'),
+            //     'quadra'             => 'D',
+            //     'fila'               => '1',
+            //     'cova'               => '05',
+            //     'observacoes'        => 'Exemplo para testar filtros.',
+            //     'ativo'              => false,
+            // ]);
+            // $desativado->delete(); // soft delete
         }
     }
 }

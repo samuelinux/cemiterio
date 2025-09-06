@@ -2,50 +2,49 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Sepultamento extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'empresa_id',
         'user_id',
         'nome_falecido',
-        'cpf_falecido',
-        'data_nascimento',
+        'mae',
+        'pai',
+        'indigente',
+        'natimorto',
+        'translado',
+        'membro',
         'data_falecimento',
-        'causa_morte',
-        'naturalidade',
-        'profissao',
-        'estado_civil',
-        'sexo',
         'data_sepultamento',
-        'hora_sepultamento',
-        'local_sepultamento',
         'quadra',
-        'gaveta',
-        'numero_sepultura',
-        'tipo_sepultamento',
-        'nome_responsavel',
-        'cpf_responsavel',
-        'telefone_responsavel',
-        'parentesco',
-        'numero_certidao_obito',
-        'cartorio_certidao',
-        'numero_declaracao_obito',
-        'observacoes'
+        'fila',
+        'cova',
+        'ano_referencia',
+        'numero_sepultamento',
+        'certidao_obito_path',
+        'observacoes',
+        'ativo',
     ];
 
     protected $casts = [
-        'data_nascimento' => 'date',
-        'data_falecimento' => 'date',
+        'indigente'         => 'boolean',
+        'natimorto'         => 'boolean',
+        'translado'         => 'boolean',
+        'membro'            => 'boolean',
+        'data_falecimento'  => 'date',
         'data_sepultamento' => 'date',
-        'hora_sepultamento' => 'datetime',
+        'ativo'             => 'boolean',
     ];
 
-    // Relacionamentos
+    // Relações
     public function empresa()
     {
         return $this->belongsTo(Empresa::class);
@@ -56,28 +55,48 @@ class Sepultamento extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Scopes
-    public function scopePorEmpresa($query, $empresaId)
+    public function causas()
     {
-        return $query->where('empresa_id', $empresaId);
+        return $this->belongsToMany(CausaMorte::class, 'sepultamento_causa', 'sepultamento_id', 'causa_morte_id')
+                    ->withTimestamps();
     }
 
-    public function scopePorPeriodo($query, $dataInicio, $dataFim)
+    protected static function booted(): void
     {
-        return $query->whereBetween('data_sepultamento', [$dataInicio, $dataFim]);
+        // Geração do ano + número sequencial por empresa/ano
+        static::creating(function (Sepultamento $m) {
+            // Define ano_ref a partir de data_sepultamento (ou ano atual se não houver)
+            if (empty($m->ano_referencia)) {
+                $m->ano_referencia = $m->data_sepultamento
+                    ? Carbon::parse($m->data_sepultamento)->year
+                    : now()->year;
+            }
+
+            // Se não veio número, gera o próximo disponível
+            if (empty($m->numero_sepultamento)) {
+                DB::transaction(function () use ($m) {
+                    $max = self::query()
+                        ->where('empresa_id', $m->empresa_id)
+                        ->where('ano_referencia', $m->ano_referencia)
+                        ->lockForUpdate()
+                        ->max('numero_sepultamento');
+
+                    $m->numero_sepultamento = (int) ($max ?? 0) + 1;
+                });
+            }
+        });
     }
 
-    // Accessors
-    public function getNomeCompletoAttribute()
+    // Helper de exibição (UI): 2025-000123
+    public function numeroFormatado(): string
     {
-        return $this->nome_falecido;
+        return sprintf('%d-%06d', $this->ano_referencia, $this->numero_sepultamento);
     }
 
-    public function getIdadeAttribute()
-    {
-        if ($this->data_nascimento && $this->data_falecimento) {
-            return $this->data_nascimento->diffInYears($this->data_falecimento);
-        }
-        return null;
-    }
+    // App\Models\Sepultamento.php
+public function scopePorEmpresa($query, int $empresaId)
+{
+    return $query->where('empresa_id', $empresaId);
+}
+
 }
