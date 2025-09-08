@@ -69,7 +69,7 @@
                     <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nome</th>
                     <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Falecimento</th>
                     <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Sepultamento</th>
-                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Local</th>
+                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Q / F / C</th>
                     <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">Ações</th>
                 </tr>
             </thead>
