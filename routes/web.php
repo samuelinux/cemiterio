@@ -7,32 +7,31 @@ use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\EmpresaLoginController;
 use App\Http\Controllers\Empresa\DashboardController;
 use App\Http\Controllers\Empresa\SepultamentoController;
+use App\Models\Empresa;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
-// Rota inicial - redireciona para admin
-Route::get('/', function () {
-    return redirect()->route('admin.login');
-});
+// Rota inicial → login admin
+// Route::get('/', fn () => redirect()->route('admin.login'));
 
-// Rotas de autenticação para Admin
+// Atalho /admin → dashboard ou login (dependendo do auth)
+Route::get('/admin', fn () => redirect()->route('admin.dashboard'))
+    ->middleware(['auth', 'admin'])
+    ->name('admin.home');
+
+// Rotas de autenticação/Admin
 Route::prefix('admin')->name('admin.')->group(function () {
     // Login
     Route::get('login', [AdminLoginController::class, 'showLoginForm'])->name('login');
     Route::post('login', [AdminLoginController::class, 'login']);
     Route::post('logout', [AdminLoginController::class, 'logout'])->name('logout');
 
-    // Rotas protegidas por middleware admin
+    // Protegidas
     Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
@@ -41,32 +40,32 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Gestão de utilizadores
         Route::resource('users', AdminUserController::class);
-        Route::get('users/{user}/permissions', [AdminUserController::class, 'permissions'])->name('users.permissions');
-        Route::put('users/{user}/permissions', [AdminUserController::class, 'updatePermissions'])->name('users.permissions.update');
+        Route::get('users/{user}/permissions', [AdminUserController::class, 'permissions'])
+            ->name('users.permissions');
+        Route::put('users/{user}/permissions', [AdminUserController::class, 'updatePermissions'])
+            ->name('users.permissions.update');
     });
 });
 
-// Rotas de autenticação para Empresa
-Route::prefix('{empresa}')->name('empresa.')->group(function () {
+// Rotas de autenticação/Empresa
+Route::prefix('{empresa:slug}')
+    ->where(['empresa' => '^(?!admin$)(?!home$)(?!api$)[a-z0-9-]+$']) // evita colisões
+    ->name('empresa.')
+    ->group(function () {
+        Route::get('/', fn (Empresa $empresa) => redirect()->route('empresa.login', $empresa))
+            ->name('home');
 
-    Route::get('/', function ($empresa) {
-        return redirect()->route('empresa.login', ['empresa' => $empresa]);
-    })->name('home');
-    
-    // Login
-    Route::get('login', [EmpresaLoginController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [EmpresaLoginController::class, 'login']);
-    Route::post('logout', [EmpresaLoginController::class, 'logout'])->name('logout');
+        // Login empresa
+        Route::get('login', [EmpresaLoginController::class, 'showLoginForm'])->name('login');
+        Route::post('login', [EmpresaLoginController::class, 'login']);
+        Route::post('logout', [EmpresaLoginController::class, 'logout'])->name('logout');
 
-    // Rotas protegidas por middleware empresa
-    Route::middleware(['auth', 'empresa'])->group(function () {
-        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-        // Gestão de sepultamentos
-        Route::resource('sepultamentos', SepultamentoController::class);
+        // Protegidas
+        Route::middleware(['auth', 'empresa'])->group(function () {
+            Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+            Route::resource('sepultamentos', SepultamentoController::class);
+        });
     });
 
-    Route::fallback(function ($empresa) {
-        return redirect()->route('empresa.login', ['empresa' => $empresa]);
-    });
-});
+// Fallback global → 404
+Route::fallback(fn () => abort(404, 'Página não encontrada.'));

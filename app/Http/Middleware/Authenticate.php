@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Authenticate extends Middleware
 {
@@ -21,14 +20,10 @@ class Authenticate extends Middleware
             return route('admin.login');
         }
 
-        // Se for rota de empresa → manda para empresa.login (slug dinâmico)
         if ($request->route('empresa')) {
-            return route('empresa.login', [
-                'empresa' => $request->route('empresa'),
-            ]);
+            return route('empresa.login', $request->route('empresa'));
         }
 
-        // Se não caiu em nenhum dos casos → rota inválida → erro 404
-        throw new NotFoundHttpException();
+        abort(404, 'Rota inválida.');
     }
 }
