@@ -5,33 +5,41 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('audit_logs', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnUpdate()->restrictOnDelete();
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete()->cascadeOnUpdate();
+            $table->foreignId('user_id')
+                  ->nullable()
+                  ->constrained('users')
+                  ->nullOnDelete();
 
-            $table->string('target_type', 60);     // ex.: "sepultamentos"
-            $table->unsignedBigInteger('target_id');
+            $table->foreignId('empresa_id')
+                  ->nullable()
+                  ->constrained('empresas')
+                  ->nullOnDelete();
 
-            $table->string('evento', 60);          // ex.: update, delete, restore, attach_causa, detach_causa, upload_certidao...
+            $table->string('tabela', 100);
+            $table->unsignedBigInteger('registro_id')->nullable();
+            $table->string('acao', 50); // create, update, delete, restore, login, logout
 
-            $table->json('diff')->nullable();      // campos alterados (antes/depois) quando aplicável
-            $table->json('meta')->nullable();      // contexto: route, ip, ua, channel, permission, motivo, etc.
+            $table->json('valores_antes')->nullable();
+            $table->json('valores_depois')->nullable();
 
-            $table->string('correlation_id', 64)->nullable(); // para agrupar eventos correlatos
-            $table->string('tz_offset', 6)->nullable();       // ex.: "-03:00"
+            $table->string('ip', 45)->nullable(); // suporta IPv6
+            $table->text('user_agent')->nullable();
 
-            $table->timestamps();
-
-            $table->index(['empresa_id','target_type','target_id','created_at'], 'audit_target_idx');
-            $table->index(['empresa_id','user_id','created_at'], 'audit_user_idx');
-            $table->index(['empresa_id','evento','created_at'], 'audit_event_idx');
+            $table->timestamps(); // created_at = quando ocorreu
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('audit_logs');

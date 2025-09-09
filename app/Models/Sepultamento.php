@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Auditavel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,9 @@ use Illuminate\Support\Facades\DB;
 
 class Sepultamento extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
+    use Auditavel;
 
     protected $fillable = [
         'empresa_id',
@@ -35,13 +38,13 @@ class Sepultamento extends Model
     ];
 
     protected $casts = [
-        'indigente'         => 'boolean',
-        'natimorto'         => 'boolean',
-        'translado'         => 'boolean',
-        'membro'            => 'boolean',
-        'data_falecimento'  => 'date',
+        'indigente' => 'boolean',
+        'natimorto' => 'boolean',
+        'translado' => 'boolean',
+        'membro' => 'boolean',
+        'data_falecimento' => 'date',
         'data_sepultamento' => 'date',
-        'ativo'             => 'boolean',
+        'ativo' => 'boolean',
     ];
 
     // Relações
@@ -94,9 +97,8 @@ class Sepultamento extends Model
     }
 
     // App\Models\Sepultamento.php
-public function scopePorEmpresa($query, int $empresaId)
-{
-    return $query->where('empresa_id', $empresaId);
-}
-
+    public function scopePorEmpresa($query, int $empresaId)
+    {
+        return $query->where('empresa_id', $empresaId);
+    }
 }

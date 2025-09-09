@@ -9,30 +9,33 @@ class AuditLog extends Model
 {
     use HasFactory;
 
+    protected $table = 'audit_logs';
+
     protected $fillable = [
-        'empresa_id',
         'user_id',
-        'target_type',
-        'target_id',
-        'evento',
-        'diff',
-        'meta',
-        'correlation_id',
-        'tz_offset',
+        'empresa_id',
+        'tabela',
+        'registro_id',
+        'acao',
+        'valores_antes',
+        'valores_depois',
+        'ip',
+        'user_agent',
     ];
 
     protected $casts = [
-        'diff' => 'array',
-        'meta' => 'array',
+        'valores_antes' => 'array',
+        'valores_depois' => 'array',
     ];
+
+    // Relacionamentos
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function empresa()
     {
         return $this->belongsTo(Empresa::class);
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class)->withDefault();
     }
 }
