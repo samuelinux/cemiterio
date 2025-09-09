@@ -19,8 +19,15 @@ class Index extends Component
 
     public ?string $status = null; // 'ativo' | 'inativo' | null
 
-    public function updatingSearch() { $this->resetPage(); }
-    public function updatingStatus() { $this->resetPage(); }
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatus()
+    {
+        $this->resetPage();
+    }
 
     public function updatedPerPage($value)
     {
@@ -42,6 +49,14 @@ class Index extends Component
     public function delete(int $sepultamentoId): void
     {
         try {
+            $user = Auth::user();
+
+            if (!$user->hasPermissao('sepultamentos', 'excluir')) {
+                $this->dispatch('toast', type: 'error', title: 'Você não tem permissão para excluir sepultamentos.');
+
+                return;
+            }
+
             $empresaId = Auth::user()->empresa_id;
 
             $sepultamento = Sepultamento::where('empresa_id', $empresaId)

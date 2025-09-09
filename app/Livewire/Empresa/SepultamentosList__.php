@@ -67,15 +67,34 @@ class SepultamentosList extends Component
         $this->resetPage();
     }
 
-    public function delete($sepultamentoId)
+    public function delete(int $sepultamentoId): void
     {
-        $this->checkPermission('sepultamentos', 'excluir');
+        try {
+            $user = Auth::user();
 
-        $sepultamento = Sepultamento::where('empresa_id', Auth::user()->empresa_id)
-            ->findOrFail($sepultamentoId);
-        $sepultamento->delete();
+            if (!$user->hasPermissao('sepultamentos', 'excluir')) {
+                $this->dispatch('toast', type: 'error', title: 'Você não tem permissão para excluir sepultamentos.');
 
-        $this->alert('success', 'Sepultamento excluído com sucesso!');
+                return;
+            }
+
+            $empresaId = $user->empresa_id;
+
+            $sepultamento = Sepultamento::where('empresa_id', $empresaId)
+                ->findOrFail($sepultamentoId);
+
+            $sepultamento->delete();
+
+            $this->dispatch('toast', type: 'success', title: 'Sepultamento excluído!');
+            $this->resetPage();
+        } catch (\Throwable $e) {
+            report($e);
+            $this->dispatch('swal',
+                type: 'error',
+                title: 'Falha ao excluir',
+                text: app()->isLocal() ? $e->getMessage() : 'Erro inesperado.'
+            );
+        }
     }
 
     public function render()

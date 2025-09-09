@@ -10,7 +10,9 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -23,7 +25,7 @@ class User extends Authenticatable
         'password',
         'empresa_id',
         'tipo_usuario',
-        'ativo'
+        'ativo',
     ];
 
     /**
@@ -88,5 +90,29 @@ class User extends Authenticatable
     public function isUser()
     {
         return $this->tipo_usuario === 'user';
+    }
+
+    /**
+     * Verifica se o usuário tem permissão para executar uma ação em determinada tabela.
+     *
+     * @param string $tabela Nome da tabela (ex: 'sepultamentos')
+     * @param string $acao   Ação: 'consultar', 'cadastrar', 'editar', 'excluir'
+     */
+    public function hasPermissao(string $tabela, string $acao): bool
+    {
+        // Admin sempre tem todas as permissões
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        $acoesValidas = ['consultar', 'cadastrar', 'editar', 'excluir'];
+        if (!in_array($acao, $acoesValidas, true)) {
+            return false;
+        }
+
+        return $this->permissoes()
+            ->where('tabela', $tabela)
+            ->where($acao, true)
+            ->exists();
     }
 }
