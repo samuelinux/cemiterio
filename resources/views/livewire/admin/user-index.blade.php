@@ -12,7 +12,7 @@
         })
     "
     @toast.window="
-        const T = Swal.mixin({toast:true, position:'top-end', showConfirmButton:false, timer:2500, timerProgressBar:true});
+        const T = Swal.mixin({toast:true, position:'top-end', showConfirmButton:false, timer:4000, timerProgressBar:true});
         T.fire({ icon: $event.detail.type || 'info', title: $event.detail.title || '' })
     "
     @swal-confirm-delete.window="

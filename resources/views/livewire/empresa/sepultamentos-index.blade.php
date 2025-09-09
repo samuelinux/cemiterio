@@ -12,7 +12,7 @@
         })
     "
     @toast.window="
-        const T = Swal.mixin({toast:true, position:'top-end', showConfirmButton:false, timer:2500, timerProgressBar:true});
+        const T = Swal.mixin({toast:true, position:'top-end', showConfirmButton:false, timer:4000, timerProgressBar:true});
         T.fire({ icon: $event.detail.type || 'info', title: $event.detail.title || '' })
     "
     @swal-confirm-delete.window="
@@ -142,6 +142,14 @@
 
     {{-- Paginação --}}
     <div>
-        {{ $sepultamentos->links() }}
+        @if ($sepultamentos->count())
+    {{-- tabela/listagem --}}
+    {{ $sepultamentos->links() }}
+@else
+    <p class="text-center text-gray-500 py-6">
+        Você não tem permissão para listar sepultamentos.
+    </p>
+@endif
+
     </div>
 </div>

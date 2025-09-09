@@ -3,6 +3,7 @@
 namespace App\Livewire\Empresa\Sepultamentos;
 
 use App\Models\Sepultamento;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -78,6 +79,20 @@ class Index extends Component
 
     public function render()
     {
+        $user = Auth::user();
+
+        if (!$user->hasPermissao('sepultamentos', 'consultar')) {
+            $sepultamentos = new LengthAwarePaginator([], 0, $this->perPage);
+
+            // dispara toast depois que a view já está pronta
+            $this->js("
+            const T = Swal.mixin({toast:true, position:'top-end', showConfirmButton:false, timer:4000, timerProgressBar:true});
+            T.fire({ icon: 'error', title: 'Você não tem permissão para listar sepultamentos.' })
+        ");
+
+            return view('livewire.empresa.sepultamentos-index', compact('sepultamentos'));
+        }
+
         $empresaId = Auth::user()->empresa_id;
 
         $sepultamentos = Sepultamento::query()
