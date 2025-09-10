@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\EmpresaController as AdminEmpresaController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\EmpresaLoginController;
+use App\Http\Controllers\Empresa\CausaMorteController;
 use App\Http\Controllers\Empresa\DashboardController;
 use App\Http\Controllers\Empresa\SepultamentoController;
 use App\Models\Empresa;
@@ -64,6 +65,7 @@ Route::prefix('{empresa:slug}')
         Route::middleware(['auth', 'empresa'])->group(function () {
             Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
             Route::resource('sepultamentos', SepultamentoController::class);
+            Route::resource('causas-morte', CausaMorteController::class);
         });
     });
 
