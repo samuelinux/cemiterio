@@ -26,7 +26,7 @@ class Index extends Component
     // Flags de UI (modais)
     // -------------------------------------------------
     public bool $showCreateModal = false;
-    public bool $showEditModal   = false;
+    public bool $showEditModal = false;
 
     // -------------------------------------------------
     // Formulário (reutilizado para criar/editar)
@@ -47,16 +47,16 @@ class Index extends Component
     protected function rules(): array
     {
         return [
-            'descricao'     => 'required|string|max:255',
-            'codigo_cid10'  => 'nullable|string|max:20',
-            'ativo'         => 'boolean',
+            'descricao' => 'required|string|max:255',
+            'codigo_cid10' => 'nullable|string|max:20',
+            'ativo' => 'boolean',
         ];
     }
 
     protected array $messages = [
         'descricao.required' => 'A descrição é obrigatória.',
-        'descricao.max'      => 'A descrição não pode exceder 255 caracteres.',
-        'codigo_cid10.max'   => 'O código CID-10 não pode exceder 20 caracteres.',
+        'descricao.max' => 'A descrição não pode exceder 255 caracteres.',
+        'codigo_cid10.max' => 'O código CID-10 não pode exceder 20 caracteres.',
     ];
 
     // -------------------------------------------------
@@ -106,9 +106,9 @@ class Index extends Component
             $this->validate();
 
             $c = CausaMorte::create([
-                'descricao'     => $this->descricao,
-                'codigo_cid10'  => $this->codigo_cid10,
-                'ativo'         => $this->ativo,
+                'descricao' => $this->descricao,
+                'codigo_cid10' => $this->codigo_cid10,
+                'ativo' => $this->ativo,
             ]);
 
             // Trait Auditavel fará o log 'create'
@@ -140,10 +140,10 @@ class Index extends Component
 
         $c = CausaMorte::findOrFail($id);
 
-        $this->causaId       = $c->id;
-        $this->descricao     = (string) $c->descricao;
-        $this->codigo_cid10  = (string) $c->codigo_cid10;
-        $this->ativo         = (bool) $c->ativo;
+        $this->causaId = $c->id;
+        $this->descricao = (string) $c->descricao;
+        $this->codigo_cid10 = (string) $c->codigo_cid10;
+        $this->ativo = (bool) $c->ativo;
 
         $this->logAcao('ui.open_edit_modal', $id);
         $this->showEditModal = true;
@@ -157,6 +157,7 @@ class Index extends Component
 
         if (!$this->causaId) {
             $this->dispatch('swal', type: 'error', title: 'Registro inválido.');
+
             return;
         }
 
@@ -164,9 +165,9 @@ class Index extends Component
             $this->validate();
 
             CausaMorte::findOrFail($this->causaId)->update([
-                'descricao'     => $this->descricao,
-                'codigo_cid10'  => $this->codigo_cid10,
-                'ativo'         => $this->ativo,
+                'descricao' => $this->descricao,
+                'codigo_cid10' => $this->codigo_cid10,
+                'ativo' => $this->ativo,
             ]);
 
             // Trait Auditavel fará o log 'update'
@@ -230,7 +231,7 @@ class Index extends Component
     public function closeModals(): void
     {
         $this->showCreateModal = false;
-        $this->showEditModal   = false;
+        $this->showEditModal = false;
     }
 
     private function resetForm(): void
@@ -254,12 +255,12 @@ class Index extends Component
         $tem = match ($acao) {
             'consultar' => (bool) ($p->consultar ?? false),
             'cadastrar' => (bool) ($p->cadastrar ?? false),
-            'editar'    => (bool) ($p->editar ?? false),
-            'excluir'   => (bool) ($p->excluir ?? false),
-            default     => false,
+            'editar' => (bool) ($p->editar ?? false),
+            'excluir' => (bool) ($p->excluir ?? false),
+            default => false,
         };
 
-        if (! $tem) {
+        if (!$tem) {
             $this->logAcao('permission.denied', null, null, ['acao' => $acao]);
             if ($toastOnDeny) {
                 $this->dispatch('toast', type: 'error', title: 'Sem permissão para esta ação.');
@@ -278,15 +279,15 @@ class Index extends Component
     ): void {
         try {
             AuditLog::create([
-                'user_id'       => Auth::id(),
-                'empresa_id'    => Auth::user()->empresa_id ?? null,
-                'tabela'        => $tabela,
-                'registro_id'   => $registroId,
-                'acao'          => $acao,
+                'user_id' => Auth::id(),
+                'empresa_id' => Auth::user()->empresa_id ?? null,
+                'tabela' => $tabela,
+                'registro_id' => $registroId,
+                'acao' => $acao,
                 'valores_antes' => $antes,
-                'valores_depois'=> $depois,
-                'ip'            => request()->ip(),
-                'user_agent'    => request()->userAgent(),
+                'valores_depois' => $depois,
+                'ip' => request()->ip(),
+                'user_agent' => request()->userAgent(),
             ]);
         } catch (\Throwable $e) {
             report($e); // não quebra a UX se auditoria falhar
@@ -299,15 +300,17 @@ class Index extends Component
     public function render()
     {
         // Se não pode listar, não consulta o DB (UX + perf)
-        if (! $this->canList) {
-            // Pode retornar uma coleção vazia para a view
-            $causas = collect();
+        if (!$this->canList) {
+            // paginator vazio (0 resultados) – evita erro no links()
+            $causas = CausaMorte::query()
+                ->whereRaw('1=0')
+                ->paginate($this->perPage);
+
             return view('livewire.empresa.causas-morte-index', compact('causas'));
         }
 
         $causas = CausaMorte::query()
-            ->when($this->search, fn ($q) =>
-                $q->where('descricao', 'like', "%{$this->search}%")
+            ->when($this->search, fn ($q) => $q->where('descricao', 'like', "%{$this->search}%")
                   ->orWhere('codigo_cid10', 'like', "%{$this->search}%")
             )
             ->orderBy('descricao')

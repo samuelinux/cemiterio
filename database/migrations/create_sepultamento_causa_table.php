@@ -19,7 +19,7 @@ return new class extends Migration {
 
             $table->timestamps();
 
-            $table->unique(['sepultamento_id','causa_morte_id'], 'sepultamento_causa_unique');
+            $table->unique(['sepultamento_id', 'causa_morte_id'], 'sepultamento_causa_unique');
             $table->index('sepultamento_id');
             $table->index('causa_morte_id');
         });

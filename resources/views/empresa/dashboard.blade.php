@@ -132,7 +132,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ $sepultamento->data_sepultamento->format('d/m/Y') }}
+                            {{ optional($sepultamento->data_sepultamento)->format('d/m/Y') ?? 'Não informada' }}
                             @if($sepultamento->hora_sepultamento)
                                 <br><span class="text-gray-500">{{ $sepultamento->hora_sepultamento->format('H:i') }}</span>
                             @endif
@@ -180,4 +180,3 @@
 </div>
 @endif
 @endsection
-
