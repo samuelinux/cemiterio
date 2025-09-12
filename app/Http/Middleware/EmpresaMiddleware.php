@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Empresa;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,26 +16,36 @@ class EmpresaMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check()) {
-            return redirect()->route('empresa.login', $request->route('empresa'));
+        // Não logado → 403 (como você preferiu)
+        if (! auth()->check()) {
+            abort(403, 'Acesso negado. É necessário estar autenticado.');
         }
 
         $user = auth()->user();
-        $empresaSlug = $request->route('empresa');
 
-        // Verificar se o utilizador é do tipo 'user' (não admin)
-        if (!$user->isUser()) {
+        // Pega o parâmetro {empresa} da rota (pode ser slug string ou Model Empresa)
+        $param = $request->route('empresa');
+        $empresa = $param instanceof Empresa
+            ? $param
+            : Empresa::where('slug', (string) $param)->first();
+
+        if (! $empresa) {
+            abort(404, 'Empresa não encontrada.');
+        }
+
+        // Somente usuários do tipo "user" entram na área da empresa
+        if (! $user->isUser()) {
             abort(403, 'Acesso negado. Apenas utilizadores de empresa podem acessar esta área.');
         }
 
-        // Verificar se o utilizador pertence à empresa correta
-        if (!$user->empresa || $user->empresa->slug !== $empresaSlug) {
+        // Usuário precisa pertencer à empresa da rota
+        if ((int) $user->empresa_id !== (int) $empresa->id) {
             abort(403, 'Acesso negado. Você não tem permissão para acessar esta empresa.');
         }
 
-        // Verificar se o utilizador está ativo
-        if (!$user->ativo) {
-            abort(403, 'Acesso negado. Sua conta está inativa.');
+        // Conta/empresa ativas
+        if (! $user->ativo || ! $empresa->ativo) {
+            abort(403, 'Acesso negado. Conta ou empresa inativa.');
         }
 
         return $next($request);

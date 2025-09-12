@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', fn () => redirect()->route('admin.login'));
 
 // Atalho /admin → dashboard ou login (dependendo do auth)
-Route::get('/admin', fn () => redirect()->route('admin.dashboard'))
+Route::get('/admin', fn() => redirect()->route('admin.dashboard'))
     ->middleware(['auth', 'admin'])
     ->name('admin.home');
 
@@ -53,7 +53,7 @@ Route::prefix('{empresa:slug}')
     ->where(['empresa' => '^(?!admin$)(?!home$)(?!api$)[a-z0-9-]+$']) // evita colisões
     ->name('empresa.')
     ->group(function () {
-        Route::get('/', fn (Empresa $empresa) => redirect()->route('empresa.login', $empresa))
+        Route::get('/', fn(Empresa $empresa) => redirect()->route('empresa.login', $empresa))
             ->name('home');
 
         // Login empresa
@@ -65,9 +65,10 @@ Route::prefix('{empresa:slug}')
         Route::middleware(['auth', 'empresa'])->group(function () {
             Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
             Route::resource('sepultamentos', SepultamentoController::class);
-            Route::resource('causas-morte', CausaMorteController::class);
+            Route::resource('causas-morte', CausaMorteController::class)
+                ->parameters(['causas-morte' => 'causa']);
         });
     });
 
 // Fallback global → 404
-Route::fallback(fn () => abort(404, 'Página não encontrada.'));
+Route::fallback(fn() => abort(404, 'Página não encontrada.'));

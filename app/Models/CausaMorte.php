@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Auditavel;
 
 class CausaMorte extends Model
 {
     use HasFactory;
+    use Auditavel;
+    
 
     protected $table = 'causas_morte';
 

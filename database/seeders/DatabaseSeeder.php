@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             EmpresaSeeder::class,
             UserSeeder::class,
+            CausaMorteSeeder::class,
             PermissaoSeeder::class,
             SepultamentoSeeder::class,
         ]);
