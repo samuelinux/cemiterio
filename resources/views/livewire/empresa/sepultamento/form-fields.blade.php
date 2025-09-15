@@ -1,4 +1,4 @@
-{{-- resources/views/livewire/empresa/partials/_sepultamento-form-fields.blade.php --}}
+{{-- resources/views/livewire/empresa/_sepultamento/form-fields.blade.php --}}
 <div class="max-h-[calc(100vh-200px)] overflow-y-auto">
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {{-- Nome do falecido --}}

@@ -1,3 +1,4 @@
+{{-- resources/views/livewire/empresa/sepultamentos/index.blade.php --}}
 <div
     x-data="{ showCreate: @entangle('showCreateModal'), showEdit: @entangle('showEditModal') }"
     @swal.window="
@@ -42,27 +43,8 @@
         @endif
     </div>
 
-    {{-- Filtros --}}
-    <div class="flex flex-col md:flex-row md:items-center gap-2">
-        <input type="text"
-               placeholder="Buscar por nome, quadra, fila, cova..."
-               wire:model.live.debounce.300ms="search"
-               class="w-full md:w-1/3 rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500">
-
-        <select wire:model.live.number="perPage"
-                class="rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500">
-            <option value="10">10 por página</option>
-            <option value="25">25 por página</option>
-            <option value="50">50 por página</option>
-        </select>
-
-        <select wire:model.live="status"
-                class="rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500">
-            <option value="">Todos</option>
-            <option value="ativo">Apenas ativos</option>
-            <option value="inativo">Apenas inativos</option>
-        </select>
-    </div>
+    {{-- Filtros Avançados --}}
+    @include('livewire.empresa.sepultamento.search-fields')
 
     {{-- Tabela (desktop) --}}
     <div class="overflow-x-auto hidden md:block">
@@ -83,8 +65,12 @@
                             <div class="font-medium">{{ $s->nome_falecido }}</div>
                             <div class="text-xs text-gray-500">{{ $s->numeroFormatado() }}</div>
                         </td>
-                        <td class="px-3 py-2 text-sm text-gray-600">{{ $s->data_falecimento?->format('d/m/Y') ?? '-' }}</td>
-                        <td class="px-3 py-2 text-sm text-gray-600">{{ $s->data_sepultamento?->format('d/m/Y') ?? '-' }}</td>
+                        <td class="px-3 py-2 text-sm text-gray-600">
+                            {{ $s->data_falecimento?->format('d/m/Y') ?? '-' }}
+                        </td>
+                        <td class="px-3 py-2 text-sm text-gray-600">
+                            {{ $s->data_sepultamento?->format('d/m/Y') ?? '-' }}
+                        </td>
                         <td class="px-3 py-2 text-sm text-gray-600">
                             {{ $s->quadra ?? '-' }} / {{ $s->fila ?? '-' }} / {{ $s->cova ?? '-' }}
                         </td>
@@ -154,20 +140,20 @@
     </div>
 
     {{-- Paginação --}}
-    <div>
-        {{ $sepultamentos->links() }}
-    </div>
+    <div>{{ $sepultamentos->links() }}</div>
 
     {{-- MODAL: Criar --}}
     <div x-show="showCreate" x-cloak class="fixed inset-0 z-50 flex items-center justify-center">
         <div class="absolute inset-0 bg-black/40" @click="showCreate = false; $wire.closeModals()"></div>
-        <div class="relative bg-white w-full max-w-2xl mx-4 rounded-xl shadow p-6">
+        <div class="relative bg-white w-full max-w-2xl mx-4 rounded-xl shadow p-6 flex flex-col">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Novo Sepultamento</h3>
 
-            <form wire:submit.prevent="store" class="space-y-4">
-                @include('livewire.empresa.partials._sepultamento-form-fields')
+            <form wire:submit.prevent="store" class="flex flex-col flex-1">
+                <div class="flex-1 overflow-y-auto pr-1">
+                    @include('livewire.empresa.sepultamento.form-fields')
+                </div>
 
-                <div class="flex justify-end gap-2 pt-2">
+                <div class="flex justify-end gap-2 pt-4 border-t mt-4">
                     <button type="button"
                             @click="showCreate = false; $wire.closeModals()"
                             class="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">
@@ -185,13 +171,15 @@
     {{-- MODAL: Editar --}}
     <div x-show="showEdit" x-cloak class="fixed inset-0 z-50 flex items-center justify-center">
         <div class="absolute inset-0 bg-black/40" @click="showEdit = false; $wire.closeModals()"></div>
-        <div class="relative bg-white w-full max-w-2xl mx-4 rounded-xl shadow p-6">
+        <div class="relative bg-white w-full max-w-2xl mx-4 rounded-xl shadow p-6 flex flex-col">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Editar Sepultamento</h3>
 
-            <form wire:submit.prevent="update" class="space-y-4">
-                @include('livewire.empresa.partials._sepultamento-form-fields')
+            <form wire:submit.prevent="update" class="flex flex-col flex-1">
+                <div class="flex-1 overflow-y-auto pr-1">
+                    @include('livewire.empresa.sepultamento.form-fields')
+                </div>
 
-                <div class="flex justify-end gap-2 pt-2">
+                <div class="flex justify-end gap-2 pt-4 border-t mt-4">
                     <button type="button"
                             @click="showEdit = false; $wire.closeModals()"
                             class="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">
