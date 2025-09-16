@@ -5,7 +5,6 @@ namespace App\Livewire\Empresa\Sepultamento\Traits;
 use App\Models\Sepultamento;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 trait WithSepultamentoExport
 {
@@ -13,7 +12,7 @@ trait WithSepultamentoExport
     {
         $empresaId = Auth::user()->empresa_id;
 
-        // Mesma query usada no método render
+        // Consulta com todos os campos originais
         $sepultamentos = Sepultamento::query()
             ->where('empresa_id', $empresaId)
             ->when($this->searchNome, fn ($q) => $q->where('nome_falecido', 'like', "%{$this->searchNome}%"))
@@ -28,13 +27,37 @@ trait WithSepultamentoExport
             ->when($this->searchSepultamentoAte, fn ($q) => $q->whereDate('data_sepultamento', '<=', $this->searchSepultamentoAte))
             ->when($this->searchStatus === 'ativo', fn ($q) => $q->where('ativo', true))
             ->when($this->searchStatus === 'inativo', fn ($q) => $q->where('ativo', false))
-            ->orderByDesc('data_sepultamento')
-            ->get(['nome_falecido']);
+            ->orderBy('nome_falecido', 'asc')
+            ->get([
+                'nome_falecido',
+                'mae',
+                'pai',
+                'quadra',
+                'fila',
+                'cova',
+                'data_falecimento',
+                'data_sepultamento',
+                'ativo',
+            ])
+            ->map(function ($sepultamento) {
+                return [
+                    'nome_falecido' => $sepultamento->nome_falecido ?? '-',
+                    'mae' => $sepultamento->mae ?? '-',
+                    'pai' => $sepultamento->pai ?? '-',
+                    'quadra' => $sepultamento->quadra ?? '-',
+                    'fila' => $sepultamento->fila ?? '-',
+                    'cova' => $sepultamento->cova ?? '-',
+                    'data_falecimento' => $sepultamento->data_falecimento ? \Carbon\Carbon::parse($sepultamento->data_falecimento)->format('d/m/Y') : '-',
+                    'data_sepultamento' => $sepultamento->data_sepultamento ? \Carbon\Carbon::parse($sepultamento->data_sepultamento)->format('d/m/Y') : '-',
+                    'ativo' => $sepultamento->ativo ? 'Sim' : 'Não',
+                ];
+            })
+            ->toArray();
 
         // Log para depuração
         Log::info('Exportando PDF', [
-            'sepultamentos_count' => $sepultamentos->count(),
-            'sepultamentos' => $sepultamentos->pluck('nome_falecido')->toArray(),
+            'sepultamentos_count' => count($sepultamentos),
+            'sepultamentos' => $sepultamentos,
             'filtros' => [
                 'searchNome' => $this->searchNome,
                 'searchMae' => $this->searchMae,
@@ -50,16 +73,17 @@ trait WithSepultamentoExport
             ],
         ]);
 
-        if ($sepultamentos->isEmpty()) {
+        if (empty($sepultamentos)) {
             $this->dispatch('toast', type: 'error', title: 'Nenhum sepultamento encontrado para exportar.');
+
             return;
         }
 
         // Armazenar dados na sessão para a rota de download
-        session(['sepultamentos_pdf_data' => $sepultamentos->toArray()]);
+        session(['sepultamentos_pdf_data' => $sepultamentos]);
 
         // Log para confirmar que os dados foram armazenados
-        Log::info('Dados armazenados na sessão para PDF', ['sepultamentos_count' => $sepultamentos->count(), 'sepultamentos' => $sepultamentos->toArray()]);
+        Log::info('Dados armazenados na sessão para PDF', ['sepultamentos_count' => count($sepultamentos)]);
 
         // Disparar evento para redirecionar para a rota de download
         try {
