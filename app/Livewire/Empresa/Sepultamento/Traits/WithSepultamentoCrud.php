@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Empresa\Sepultamentos\Traits;
+namespace App\Livewire\Empresa\Sepultamento\Traits;
 
 use App\Models\Sepultamento;
 use Illuminate\Support\Facades\Auth;
@@ -185,6 +185,27 @@ trait WithSepultamentoCrud
         } catch (\Throwable $e) {
             $this->handleThrowable($e, 'delete', $sepultamentoId);
         }
+    }
+
+    private function preencherFormulario(Sepultamento $sepultamento): void
+    {
+        $this->sepultamentoId = $sepultamento->id;
+        $this->nome_falecido = $sepultamento->nome_falecido;
+        $this->mae = $sepultamento->mae;
+        $this->pai = $sepultamento->pai;
+        $this->indigente = $sepultamento->indigente;
+        $this->natimorto = $sepultamento->natimorto;
+        $this->translado = $sepultamento->translado;
+        $this->membro = $sepultamento->membro;
+        $this->data_falecimento = $sepultamento->data_falecimento ? $sepultamento->data_falecimento->format('Y-m-d') : null;
+        $this->data_sepultamento = $sepultamento->data_sepultamento ? $sepultamento->data_sepultamento->format('Y-m-d') : null;
+        $this->quadra = $sepultamento->quadra;
+        $this->fila = $sepultamento->fila;
+        $this->cova = $sepultamento->cova;
+        $this->certidao_obito_path = $sepultamento->certidao_obito_path;
+        $this->observacoes = $sepultamento->observacoes;
+        $this->ativo = $sepultamento->ativo;
+        $this->causasSelecionadas = $sepultamento->causas->pluck('id')->toArray();
     }
 
     // Helpers internos

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Empresa\Sepultamentos\Traits;
+namespace App\Livewire\Empresa\Sepultamento\Traits;
 
 use App\Models\AuditLog;
 use Illuminate\Support\Facades\Auth;

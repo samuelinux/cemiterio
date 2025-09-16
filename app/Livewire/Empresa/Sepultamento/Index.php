@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Livewire\Empresa\Sepultamentos;
+namespace App\Livewire\Empresa\Sepultamento;
 
-use App\Livewire\Empresa\Sepultamentos\Traits\WithAuditLogs;
-use App\Livewire\Empresa\Sepultamentos\Traits\WithSepultamentoCrud;
-use App\Livewire\Empresa\Sepultamentos\Traits\WithSepultamentoFilters;
+use App\Livewire\Empresa\Sepultamento\Traits\WithAuditLogs;
+use App\Livewire\Empresa\Sepultamento\Traits\WithSepultamentoCrud;
+use App\Livewire\Empresa\Sepultamento\Traits\WithSepultamentoFilters;
+
 use App\Models\CausaMorte;
 use App\Models\Sepultamento;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +37,7 @@ class Index extends Component
     public bool $canDelete = false;
 
     // -------------------------------------------------
-    // Formulário
+    // Formulário (CRUD)
     // -------------------------------------------------
     public ?int $sepultamentoId = null;
 
@@ -62,29 +63,32 @@ class Index extends Component
 
     public bool $ativo = true;
 
+    // -------------------------------------------------
+    // Relação (causas da morte)
+    // -------------------------------------------------
     public array $causasSelecionadas = [];
     public array $listaCausas = [];
 
     // -------------------------------------------------
-    // Filtros de busca
+    // Filtros de busca (tudo com prefixo search*)
     // -------------------------------------------------
-    public string $search = '';          // nome_falecido
+    public string $searchNome = '';                 // nome_falecido
     public ?string $searchMae = null;
     public ?string $searchPai = null;
     public ?string $searchQuadra = null;
     public ?string $searchFila = null;
     public ?string $searchCova = null;
 
-    public ?string $falecimentoInicio = null;
-    public ?string $falecimentoFim = null;
-    public ?string $sepultamentoInicio = null;
-    public ?string $sepultamentoFim = null;
+    public ?string $searchFalecimentoDe = null;
+    public ?string $searchFalecimentoAte = null;
+    public ?string $searchSepultamentoDe = null;
+    public ?string $searchSepultamentoAte = null;
 
-    public ?string $status = null; // 'ativo', 'inativo', ou null
+    public ?string $searchStatus = null;       // 'ativo', 'inativo' ou null
     public int $perPage = 10;
 
     // -------------------------------------------------
-    // Regras de validação
+    // Regras de validação (CRUD)
     // -------------------------------------------------
     protected function rules(): array
     {
@@ -124,9 +128,9 @@ class Index extends Component
     {
         $u = Auth::user();
 
-        $this->canList = $u->hasPermissao('sepultamentos', 'consultar');
+        $this->canList   = $u->hasPermissao('sepultamentos', 'consultar');
         $this->canCreate = $u->hasPermissao('sepultamentos', 'cadastrar');
-        $this->canEdit = $u->hasPermissao('sepultamentos', 'editar');
+        $this->canEdit   = $u->hasPermissao('sepultamentos', 'editar');
         $this->canDelete = $u->hasPermissao('sepultamentos', 'excluir');
 
         if (!$this->canList) {
@@ -134,6 +138,17 @@ class Index extends Component
         }
 
         $this->carregarListaCausas();
+    }
+
+    // -------------------------------------------------
+    // Hooks reativos (resetar paginação ao filtrar)
+    // -------------------------------------------------
+    public function updated($name, $value)
+    {
+        // Qualquer campo que começar com 'search*' ou perPage deve resetar a paginação
+        if (str_starts_with($name, 'search') || $name === 'perPage') {
+            $this->resetPage();
+        }
     }
 
     // -------------------------------------------------
@@ -146,9 +161,9 @@ class Index extends Component
         $this->showViewModal = false;
     }
 
-    private function resetForm(): void
+    public function resetForm(string $context = 'crud'): void
     {
-        $this->reset([
+        $crudFields = [
             'sepultamentoId',
             'nome_falecido',
             'mae',
@@ -167,35 +182,40 @@ class Index extends Component
             'observacoes',
             'ativo',
             'causasSelecionadas',
-        ]);
+        ];
 
-        $this->ativo = true;
-        $this->indigente = $this->natimorto = $this->translado = $this->membro = false;
-        $this->causasSelecionadas = [];
-    }
+        $searchFields = [
+            'searchNome',
+            'searchMae',
+            'searchPai',
+            'searchQuadra',
+            'searchFila',
+            'searchCova',
+            'searchFalecimentoDe',
+            'searchFalecimentoAte',
+            'searchSepultamentoDe',
+            'searchSepultamentoAte',
+            'searchStatus',
+        ];
 
-    private function preencherFormulario(Sepultamento $s): void
-    {
-        $this->sepultamentoId = $s->id;
-        $this->nome_falecido = (string) $s->nome_falecido;
-        $this->mae = $s->mae;
-        $this->pai = $s->pai;
-        $this->indigente = (bool) $s->indigente;
-        $this->natimorto = (bool) $s->natimorto;
-        $this->translado = (bool) $s->translado;
-        $this->membro = (bool) $s->membro;
-        $this->data_falecimento = optional($s->data_falecimento)->format('Y-m-d');
-        $this->data_sepultamento = optional($s->data_sepultamento)->format('Y-m-d');
-        $this->quadra = $s->quadra;
-        $this->fila = $s->fila;
-        $this->cova = $s->cova;
-        $this->certidao_obito_path = $s->certidao_obito_path;
-        $this->observacoes = $s->observacoes;
-        $this->ativo = (bool) $s->ativo;
+        $fieldsToReset = match ($context) {
+            'crud' => $crudFields,
+            'search' => $searchFields,
+            'all' => array_merge($crudFields, $searchFields),
+            default => $crudFields,
+        };
 
-        $this->causasSelecionadas = $s->relationLoaded('causas')
-            ? $s->causas->pluck('id')->all()
-            : $s->causas()->pluck('causas_morte.id')->all();
+        $this->reset($fieldsToReset);
+
+        if (in_array($context, ['crud', 'all'])) {
+            $this->ativo = true;
+            $this->indigente = $this->natimorto = $this->translado = $this->membro = false;
+            $this->causasSelecionadas = [];
+        }
+
+        if (in_array($context, ['search', 'all'])) {
+            $this->resetPage();
+        }
     }
 
     private function carregarListaCausas(): void
@@ -206,32 +226,6 @@ class Index extends Component
             ->get(['id', 'descricao'])
             ->map(fn ($c) => ['id' => $c->id, 'descricao' => $c->descricao])
             ->all();
-    }
-
-    // -------------------------------------------------
-    // Filtros manuais
-    // -------------------------------------------------
-    public function aplicarFiltros(): void
-    {
-        $this->resetPage();
-    }
-
-    public function limparFiltros(): void
-    {
-        $this->reset([
-            'search',
-            'searchMae',
-            'searchPai',
-            'searchQuadra',
-            'searchFila',
-            'searchCova',
-            'falecimentoInicio',
-            'falecimentoFim',
-            'sepultamentoInicio',
-            'sepultamentoFim',
-            'status',
-        ]);
-        $this->resetPage();
     }
 
     // -------------------------------------------------
@@ -251,18 +245,18 @@ class Index extends Component
 
         $sepultamentos = Sepultamento::query()
             ->where('empresa_id', $empresaId)
-            ->when($this->search, fn ($q) => $q->where('nome_falecido', 'like', "%{$this->search}%"))
+            ->when($this->searchNome, fn ($q) => $q->where('nome_falecido', 'like', "%{$this->searchNome}%"))
             ->when($this->searchMae, fn ($q) => $q->where('mae', 'like', "%{$this->searchMae}%"))
             ->when($this->searchPai, fn ($q) => $q->where('pai', 'like', "%{$this->searchPai}%"))
             ->when($this->searchQuadra, fn ($q) => $q->where('quadra', 'like', "%{$this->searchQuadra}%"))
             ->when($this->searchFila, fn ($q) => $q->where('fila', 'like', "%{$this->searchFila}%"))
             ->when($this->searchCova, fn ($q) => $q->where('cova', 'like', "%{$this->searchCova}%"))
-            ->when($this->falecimentoInicio, fn ($q) => $q->whereDate('data_falecimento', '>=', $this->falecimentoInicio))
-            ->when($this->falecimentoFim, fn ($q) => $q->whereDate('data_falecimento', '<=', $this->falecimentoFim))
-            ->when($this->sepultamentoInicio, fn ($q) => $q->whereDate('data_sepultamento', '>=', $this->sepultamentoInicio))
-            ->when($this->sepultamentoFim, fn ($q) => $q->whereDate('data_sepultamento', '<=', $this->sepultamentoFim))
-            ->when($this->status === 'ativo', fn ($q) => $q->where('ativo', true))
-            ->when($this->status === 'inativo', fn ($q) => $q->where('ativo', false))
+            ->when($this->searchFalecimentoDe, fn ($q) => $q->whereDate('data_falecimento', '>=', $this->searchFalecimentoDe))
+            ->when($this->searchFalecimentoAte, fn ($q) => $q->whereDate('data_falecimento', '<=', $this->searchFalecimentoAte))
+            ->when($this->searchSepultamentoDe, fn ($q) => $q->whereDate('data_sepultamento', '>=', $this->searchSepultamentoDe))
+            ->when($this->searchSepultamentoAte, fn ($q) => $q->whereDate('data_sepultamento', '<=', $this->searchSepultamentoAte))
+            ->when($this->searchStatus === 'ativo', fn ($q) => $q->where('ativo', true))
+            ->when($this->searchStatus === 'inativo', fn ($q) => $q->where('ativo', false))
             ->orderByDesc('data_sepultamento')
             ->paginate($this->perPage);
 

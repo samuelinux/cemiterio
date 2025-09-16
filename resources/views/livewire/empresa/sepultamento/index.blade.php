@@ -43,7 +43,7 @@
         @endif
     </div>
 
-    {{-- Filtros Avançados --}}
+    {{-- Filtros (reativos) --}}
     @include('livewire.empresa.sepultamento.search-fields')
 
     {{-- Tabela (desktop) --}}
