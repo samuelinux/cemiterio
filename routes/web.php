@@ -10,6 +10,33 @@ use App\Http\Controllers\Empresa\DashboardController;
 use App\Http\Controllers\Empresa\SepultamentoController;
 use App\Models\Empresa;
 use Illuminate\Support\Facades\Route;
+use Barryvdh\DomPDF\Facade\Pdf;
+
+Route::get('/download-sepultamentos-pdf', function () {
+    $sepultamentosData = session('sepultamentos_pdf_data', []);
+    \Illuminate\Support\Facades\Log::info('Dados da sessão na rota', ['sepultamentos' => $sepultamentosData]);
+
+    // Converter o array em uma coleção de objetos
+    $sepultamentos = collect($sepultamentosData)->map(function ($item) {
+        return (object) ['nome_falecido' => $item['nome_falecido']];
+    });
+
+    \Illuminate\Support\Facades\Log::info('Dados convertidos para coleção', ['sepultamentos' => $sepultamentos->toArray()]);
+
+    $pdf = Pdf::loadView('pdf.sepultamentos', ['sepultamentos' => $sepultamentos])
+        ->setOptions([
+            'defaultFont' => 'DejaVu Sans',
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => false,
+            'dpi' => 96,
+            'chroot' => realpath(base_path()),
+            'isFontSubsettingEnabled' => false,
+        ]);
+
+    $filename = 'sepultamentos_' . now()->format('Ymd_His') . '.pdf';
+    \Illuminate\Support\Facades\Log::info('PDF gerado na rota', ['filename' => $filename]);
+    return $pdf->download($filename);
+})->name('download.sepultamentos.pdf');
 
 /*
 |--------------------------------------------------------------------------
@@ -69,6 +96,8 @@ Route::prefix('{empresa:slug}')
                 ->parameters(['causas-morte' => 'causa']);
         });
     });
+
+    
 
 // Fallback global → 404
 Route::fallback(fn() => abort(404, 'Página não encontrada.'));

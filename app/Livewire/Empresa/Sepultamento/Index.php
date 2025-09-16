@@ -5,6 +5,7 @@ namespace App\Livewire\Empresa\Sepultamento;
 use App\Livewire\Empresa\Sepultamento\Traits\WithAuditLogs;
 use App\Livewire\Empresa\Sepultamento\Traits\WithSepultamentoCrud;
 use App\Livewire\Empresa\Sepultamento\Traits\WithSepultamentoFilters;
+use App\Livewire\Empresa\Sepultamento\Traits\WithSepultamentoExport;
 
 use App\Models\CausaMorte;
 use App\Models\Sepultamento;
@@ -20,6 +21,7 @@ class Index extends Component
     use WithSepultamentoFilters;
     use WithSepultamentoCrud;
     use WithAuditLogs;
+    use WithSepultamentoExport;
 
     // -------------------------------------------------
     // Flags de UI (modais)

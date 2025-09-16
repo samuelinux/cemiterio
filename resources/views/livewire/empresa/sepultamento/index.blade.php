@@ -1,6 +1,4 @@
-{{-- resources/views/livewire/empresa/sepultamentos/index.blade.php --}}
-<div
-    x-data="{ showCreate: @entangle('showCreateModal'), showEdit: @entangle('showEditModal') }"
+<div x-data="{ showCreate: @entangle('showCreateModal'), showEdit: @entangle('showEditModal') }"
     @swal.window="
         Swal.fire({
             icon: $event.detail.type || 'info',
@@ -28,25 +26,34 @@
             cancelButtonText: 'Cancelar'
         }).then((r) => { if (r.isConfirmed) { $wire.delete($event.detail.id) } })
     "
-    class="space-y-4"
->
-    {{-- Header --}}
+    @redirect-to-download.window="
+    console.log('Redirecionando para download', $event.detail);
+    try {
+        window.location.href = $event.detail.url;
+    } catch (e) {
+        console.error('Erro ao redirecionar para download:', e);
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: 'Falha ao iniciar o download do PDF. Tente novamente.'
+        });
+    }
+"
+    class="space-y-4">
+    <!-- Resto do código permanece inalterado -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <h2 class="text-lg font-semibold text-gray-900">Sepultamentos</h2>
 
-        @if($canCreate)
-            <button type="button"
-                    @click="showCreate = true; $wire.create()"
-                    class="px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition text-center">
+        @if ($canCreate)
+            <button type="button" @click="showCreate = true; $wire.create()"
+                class="px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition text-center">
                 Novo Sepultamento
             </button>
         @endif
     </div>
 
-    {{-- Filtros (reativos) --}}
     @include('livewire.empresa.sepultamento.search-fields')
 
-    {{-- Tabela (desktop) --}}
     <div class="overflow-x-auto hidden md:block">
         <table class="min-w-full divide-y divide-gray-200 bg-white rounded-lg shadow">
             <thead class="bg-gray-50">
@@ -76,17 +83,15 @@
                         </td>
                         <td class="px-3 py-2 text-right">
                             <div class="inline-flex items-center gap-2">
-                                @if($canEdit)
-                                    <button type="button"
-                                            @click="showEdit = true; $wire.edit({{ $s->id }})"
-                                            class="px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition">
+                                @if ($canEdit)
+                                    <button type="button" @click="showEdit = true; $wire.edit({{ $s->id }})"
+                                        class="px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition">
                                         Editar
                                     </button>
                                 @endif
-                                @if($canDelete)
-                                    <button type="button"
-                                            wire:click="confirmDelete({{ $s->id }})"
-                                            class="px-3 py-1.5 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition">
+                                @if ($canDelete)
+                                    <button type="button" wire:click="confirmDelete({{ $s->id }})"
+                                        class="px-3 py-1.5 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition">
                                         Excluir
                                     </button>
                                 @endif
@@ -104,7 +109,6 @@
         </table>
     </div>
 
-    {{-- Cards (mobile) --}}
     <div class="space-y-2 md:hidden">
         @forelse($sepultamentos as $s)
             <div class="border rounded-lg p-3 shadow-sm bg-white">
@@ -118,17 +122,15 @@
                 </div>
 
                 <div class="mt-3 flex justify-end gap-2">
-                    @if($canEdit)
-                        <button type="button"
-                                @click="showEdit = true; $wire.edit({{ $s->id }})"
-                                class="px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition">
+                    @if ($canEdit)
+                        <button type="button" @click="showEdit = true; $wire.edit({{ $s->id }})"
+                            class="px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition">
                             Editar
                         </button>
                     @endif
-                    @if($canDelete)
-                        <button type="button"
-                                wire:click="confirmDelete({{ $s->id }})"
-                                class="px-3 py-1.5 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition">
+                    @if ($canDelete)
+                        <button type="button" wire:click="confirmDelete({{ $s->id }})"
+                            class="px-3 py-1.5 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition">
                             Excluir
                         </button>
                     @endif
@@ -139,10 +141,8 @@
         @endforelse
     </div>
 
-    {{-- Paginação --}}
     <div>{{ $sepultamentos->links() }}</div>
 
-    {{-- MODAL: Criar --}}
     <div x-show="showCreate" x-cloak class="fixed inset-0 z-50 flex items-center justify-center">
         <div class="absolute inset-0 bg-black/40" @click="showCreate = false; $wire.closeModals()"></div>
         <div class="relative bg-white w-full max-w-2xl mx-4 rounded-xl shadow p-6 flex flex-col">
@@ -154,13 +154,11 @@
                 </div>
 
                 <div class="flex justify-end gap-2 pt-4 border-t mt-4">
-                    <button type="button"
-                            @click="showCreate = false; $wire.closeModals()"
-                            class="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">
+                    <button type="button" @click="showCreate = false; $wire.closeModals()"
+                        class="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">
                         Cancelar
                     </button>
-                    <button type="submit"
-                            class="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500">
+                    <button type="submit" class="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500">
                         Salvar
                     </button>
                 </div>
@@ -168,7 +166,6 @@
         </div>
     </div>
 
-    {{-- MODAL: Editar --}}
     <div x-show="showEdit" x-cloak class="fixed inset-0 z-50 flex items-center justify-center">
         <div class="absolute inset-0 bg-black/40" @click="showEdit = false; $wire.closeModals()"></div>
         <div class="relative bg-white w-full max-w-2xl mx-4 rounded-xl shadow p-6 flex flex-col">
@@ -180,13 +177,11 @@
                 </div>
 
                 <div class="flex justify-end gap-2 pt-4 border-t mt-4">
-                    <button type="button"
-                            @click="showEdit = false; $wire.closeModals()"
-                            class="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">
+                    <button type="button" @click="showEdit = false; $wire.closeModals()"
+                        class="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">
                         Cancelar
                     </button>
-                    <button type="submit"
-                            class="px-5 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">
+                    <button type="submit" class="px-5 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">
                         Atualizar
                     </button>
                 </div>
