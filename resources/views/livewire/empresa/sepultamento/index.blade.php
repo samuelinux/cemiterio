@@ -27,15 +27,15 @@
         }).then((r) => { if (r.isConfirmed) { $wire.delete($event.detail.id) } })
     "
     @redirect-to-download.window="
-    console.log('Redirecionando para download', $event.detail);
+    console.log('Redirecionando para visualização em nova guia', $event.detail);
     try {
-        window.location.href = $event.detail.url;
+        window.open($event.detail.url, '_blank'); // Alterado de window.location.href para window.open com '_blank' para nova guia
     } catch (e) {
-        console.error('Erro ao redirecionar para download:', e);
+        console.error('Erro ao abrir PDF em nova guia:', e);
         Swal.fire({
             icon: 'error',
             title: 'Erro',
-            text: 'Falha ao iniciar o download do PDF. Tente novamente.'
+            text: 'Falha ao iniciar a visualização do PDF. Tente novamente.'
         });
     }
 "
