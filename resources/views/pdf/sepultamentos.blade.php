@@ -13,6 +13,7 @@
 </head>
 <body>
     <h1>Relatório de Sepultamentos</h1>
+    <h2>{{ session('sepultamentos_empresa.nome') ?? 'Empresa não informada' }}</h2>
     <table>
         <thead>
             <tr>

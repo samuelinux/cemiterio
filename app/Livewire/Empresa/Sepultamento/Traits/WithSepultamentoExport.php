@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Empresa\Sepultamento\Traits;
 
+use App\Models\Empresa;
 use App\Models\Sepultamento;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -47,31 +48,14 @@ trait WithSepultamentoExport
                     'quadra' => $sepultamento->quadra ?? '-',
                     'fila' => $sepultamento->fila ?? '-',
                     'cova' => $sepultamento->cova ?? '-',
-                    'data_falecimento' => $sepultamento->data_falecimento ? \Carbon\Carbon::parse($sepultamento->data_falecimento)->format('d/m/Y') : '-',
-                    'data_sepultamento' => $sepultamento->data_sepultamento ? \Carbon\Carbon::parse($sepultamento->data_sepultamento)->format('d/m/Y') : '-',
+                    'data_falecimento' => $sepultamento->data_falecimento
+                        ? \Carbon\Carbon::parse($sepultamento->data_falecimento)->format('d/m/Y') : '-',
+                    'data_sepultamento' => $sepultamento->data_sepultamento
+                        ? \Carbon\Carbon::parse($sepultamento->data_sepultamento)->format('d/m/Y') : '-',
                     'ativo' => $sepultamento->ativo ? 'Sim' : 'Não',
                 ];
             })
             ->toArray();
-
-        // Log para depuração
-        Log::info('Exportando PDF', [
-            'sepultamentos_count' => count($sepultamentos),
-            'sepultamentos' => $sepultamentos,
-            'filtros' => [
-                'searchNome' => $this->searchNome,
-                'searchMae' => $this->searchMae,
-                'searchPai' => $this->searchPai,
-                'searchQuadra' => $this->searchQuadra,
-                'searchFila' => $this->searchFila,
-                'searchCova' => $this->searchCova,
-                'searchFalecimentoDe' => $this->searchFalecimentoDe,
-                'searchFalecimentoAte' => $this->searchFalecimentoAte,
-                'searchSepultamentoDe' => $this->searchSepultamentoDe,
-                'searchSepultamentoAte' => $this->searchSepultamentoAte,
-                'searchStatus' => $this->searchStatus,
-            ],
-        ]);
 
         if (empty($sepultamentos)) {
             $this->dispatch('toast', type: 'error', title: 'Nenhum sepultamento encontrado para exportar.');
@@ -79,20 +63,26 @@ trait WithSepultamentoExport
             return;
         }
 
-        // Armazenar dados na sessão para a rota de download
-        session(['sepultamentos_pdf_data' => $sepultamentos]);
+        // Buscar empresa e guardar em outra chave de sessão
+        $empresa = Empresa::find($empresaId);
 
-        // Log para confirmar que os dados foram armazenados
-        Log::info('Dados armazenados na sessão para PDF', ['sepultamentos_count' => count($sepultamentos)]);
+        session([
+            'sepultamentos_pdf_data' => $sepultamentos, // continua igual (não quebra a rota)
+            'sepultamentos_empresa' => $empresa ? $empresa->toArray() : null,
+        ]);
+
+        Log::info('Exportação PDF preparada', [
+            'empresa' => $empresa?->nome,
+            'qtd' => count($sepultamentos),
+        ]);
 
         // Disparar evento para redirecionar para a rota de download
         try {
             $url = route('download.sepultamentos.pdf');
-            Log::info('Disparando redirecionamento', ['url' => $url]);
             $this->dispatch('redirect-to-download', url: $url);
         } catch (\Exception $e) {
             Log::error('Erro ao disparar redirecionamento', ['error' => $e->getMessage()]);
-            $this->dispatch('toast', type: 'error', title: 'Erro ao gerar PDF', text: 'Falha ao redirecionar para o download. Contate o suporte.');
+            $this->dispatch('toast', type: 'error', title: 'Erro ao gerar PDF', text: 'Falha ao redirecionar para o download.');
         }
     }
 }
