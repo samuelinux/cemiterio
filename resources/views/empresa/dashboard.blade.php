@@ -88,7 +88,7 @@
                 <p class="text-blue-700 mt-1">Adicione um novo registo de sepultamento ao sistema.</p>
             </div>
             <div>
-                <a href="{{ route('empresa.sepultamentos.create', $empresa->slug) }}" 
+                <a href="{{ route('empresa.sepultamentos.index', auth()->user()->empresa->slug) }}" 
                    class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
                     Novo Sepultamento
                 </a>
