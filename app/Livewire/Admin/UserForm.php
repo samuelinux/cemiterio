@@ -27,13 +27,16 @@ class UserForm extends Component
 
     public function save()
     {
+        if ($this->empresa_id === '') {
+            $this->empresa_id = null;
+        }
         $this->validate();
 
         User::create([
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
-            'empresa_id' => $this->empresa_id,
+            'empresa_id' => $this->empresa_id ?: null,
             'tipo_usuario' => $this->tipo_usuario,
             'ativo' => $this->ativo,
         ]);
