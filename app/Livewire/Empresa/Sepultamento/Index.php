@@ -4,9 +4,8 @@ namespace App\Livewire\Empresa\Sepultamento;
 
 use App\Livewire\Empresa\Sepultamento\Traits\WithAuditLogs;
 use App\Livewire\Empresa\Sepultamento\Traits\WithSepultamentoCrud;
-use App\Livewire\Empresa\Sepultamento\Traits\WithSepultamentoFilters;
 use App\Livewire\Empresa\Sepultamento\Traits\WithSepultamentoExport;
-
+use App\Livewire\Empresa\Sepultamento\Traits\WithSepultamentoFilters;
 use App\Models\CausaMorte;
 use App\Models\Sepultamento;
 use Illuminate\Support\Facades\Auth;
@@ -89,6 +88,12 @@ class Index extends Component
     public ?string $searchStatus = null;       // 'ativo', 'inativo' ou null
     public int $perPage = 10;
 
+    // Filtros adicionais (checkboxes)
+    public bool $filtroIndigente = false;
+    public bool $filtroNatimorto = false;
+    public bool $filtroTranslado = false;
+    public bool $filtroMembro = false;
+
     // -------------------------------------------------
     // Regras de validação (CRUD)
     // -------------------------------------------------
@@ -130,9 +135,9 @@ class Index extends Component
     {
         $u = Auth::user();
 
-        $this->canList   = $u->hasPermissao('sepultamentos', 'consultar');
+        $this->canList = $u->hasPermissao('sepultamentos', 'consultar');
         $this->canCreate = $u->hasPermissao('sepultamentos', 'cadastrar');
-        $this->canEdit   = $u->hasPermissao('sepultamentos', 'editar');
+        $this->canEdit = $u->hasPermissao('sepultamentos', 'editar');
         $this->canDelete = $u->hasPermissao('sepultamentos', 'excluir');
 
         if (!$this->canList) {
@@ -198,6 +203,10 @@ class Index extends Component
             'searchSepultamentoDe',
             'searchSepultamentoAte',
             'searchStatus',
+            'filtroIndigente',
+            'filtroNatimorto',
+            'filtroTranslado',
+            'filtroMembro',
         ];
 
         $fieldsToReset = match ($context) {
@@ -259,6 +268,26 @@ class Index extends Component
             ->when($this->searchSepultamentoAte, fn ($q) => $q->whereDate('data_sepultamento', '<=', $this->searchSepultamentoAte))
             ->when($this->searchStatus === 'ativo', fn ($q) => $q->where('ativo', true))
             ->when($this->searchStatus === 'inativo', fn ($q) => $q->where('ativo', false))
+            ->when(
+                $this->filtroIndigente || $this->filtroNatimorto || $this->filtroTranslado || $this->filtroMembro,
+                function ($consulta) {
+                    $consulta->where(function ($subconsulta) {
+                        if ($this->filtroIndigente) {
+                            $subconsulta->orWhere('indigente', true);
+                        }
+                        if ($this->filtroNatimorto) {
+                            $subconsulta->orWhere('natimorto', true);
+                        }
+                        if ($this->filtroTranslado) {
+                            $subconsulta->orWhere('translado', true);
+                        }
+                        if ($this->filtroMembro) {
+                            $subconsulta->orWhere('membro', true);
+                        }
+                    });
+                }
+            )
+
             ->orderByDesc('data_sepultamento')
             ->paginate($this->perPage);
 

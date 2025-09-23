@@ -129,5 +129,38 @@
                 <option value="inativo">Inativos</option>
             </select>
         </div>
+        {{-- Classificação do sepultamento --}}
+<div class="sm:col-span-2">
+    <label class="block text-xs font-medium text-gray-600">Classificação do sepultamento</label>
+    <div class="mt-2 flex flex-wrap gap-4">
+        <label class="inline-flex items-center gap-2">
+            <input type="checkbox" wire:model.live="filtroIndigente"
+                   class="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-500">
+            <span class="text-sm text-gray-800">Indigente</span>
+        </label>
+
+        <label class="inline-flex items-center gap-2">
+            <input type="checkbox" wire:model.live="filtroNatimorto"
+                   class="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-500">
+            <span class="text-sm text-gray-800">Natimorto</span>
+        </label>
+
+        <label class="inline-flex items-center gap-2">
+            <input type="checkbox" wire:model.live="filtroTranslado"
+                   class="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-500">
+            <span class="text-sm text-gray-800">Translado</span>
+        </label>
+
+        <label class="inline-flex items-center gap-2">
+            <input type="checkbox" wire:model.live="filtroMembro"
+                   class="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-500">
+            <span class="text-sm text-gray-800">Membro</span>
+        </label>
+    </div>
+    <p class="mt-1 text-[11px] text-gray-500">
+        Você pode marcar mais de uma opção. A busca trará registros que sejam <strong>qualquer um</strong> dos selecionados.
+    </p>
+</div>
+
     </div>
 </div>
