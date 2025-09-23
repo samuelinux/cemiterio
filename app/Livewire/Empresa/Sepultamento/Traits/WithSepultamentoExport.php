@@ -28,6 +28,26 @@ trait WithSepultamentoExport
             ->when($this->searchSepultamentoAte, fn ($q) => $q->whereDate('data_sepultamento', '<=', $this->searchSepultamentoAte))
             ->when($this->searchStatus === 'ativo', fn ($q) => $q->where('ativo', true))
             ->when($this->searchStatus === 'inativo', fn ($q) => $q->where('ativo', false))
+            ->when(
+                $this->filtroIndigente || $this->filtroNatimorto || $this->filtroTranslado || $this->filtroMembro,
+                function ($consulta) {
+                    $consulta->where(function ($subconsulta) {
+                        if ($this->filtroIndigente) {
+                            $subconsulta->orWhere('indigente', true);
+                        }
+                        if ($this->filtroNatimorto) {
+                            $subconsulta->orWhere('natimorto', true);
+                        }
+                        if ($this->filtroTranslado) {
+                            $subconsulta->orWhere('translado', true);
+                        }
+                        if ($this->filtroMembro) {
+                            $subconsulta->orWhere('membro', true);
+                        }
+                    });
+                }
+            )
+
             ->orderBy('nome_falecido', 'asc')
             ->get([
                 'nome_falecido',
@@ -39,6 +59,10 @@ trait WithSepultamentoExport
                 'data_falecimento',
                 'data_sepultamento',
                 'ativo',
+                'indigente',
+                'natimorto',
+                'translado',
+                'membro',
             ])
             ->map(function ($sepultamento) {
                 return [
@@ -53,6 +77,10 @@ trait WithSepultamentoExport
                     'data_sepultamento' => $sepultamento->data_sepultamento
                         ? \Carbon\Carbon::parse($sepultamento->data_sepultamento)->format('d/m/Y') : '-',
                     'ativo' => $sepultamento->ativo ? 'Sim' : 'Não',
+                    'indigente' => $sepultamento->indigente ? 'Sim' : 'Não',
+                    'natimorto' => $sepultamento->natimorto ? 'Sim' : 'Não',
+                    'translado' => $sepultamento->translado ? 'Sim' : 'Não',
+                    'membro' => $sepultamento->membro ? 'Sim' : 'Não',
                 ];
             })
             ->toArray();
