@@ -47,24 +47,10 @@ trait WithSepultamentoQuery
             // -------------------------
             // Filtros booleanos de classificação (OR)
             // -------------------------
-            ->when(
-                $this->filtroIndigente || $this->filtroNatimorto || $this->filtroTranslado || $this->filtroMembro,
-                function ($consulta) {
-                    $consulta->where(function ($subconsulta) {
-                        if ($this->filtroIndigente) {
-                            $subconsulta->orWhere('indigente', true);
-                        }
-                        if ($this->filtroNatimorto) {
-                            $subconsulta->orWhere('natimorto', true);
-                        }
-                        if ($this->filtroTranslado) {
-                            $subconsulta->orWhere('translado', true);
-                        }
-                        if ($this->filtroMembro) {
-                            $subconsulta->orWhere('membro', true);
-                        }
-                    });
-                }
-            );
+            ->when($this->filtroIndigente, fn ($q) => $q->where('indigente', true))
+            ->when($this->filtroNatimorto, fn ($q) => $q->where('natimorto', true))
+            ->when($this->filtroTranslado, fn ($q) => $q->where('translado', true))
+            ->when($this->filtroMembro, fn ($q) => $q->where('membro', true))
+        ;
     }
 }
