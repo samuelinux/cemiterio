@@ -39,6 +39,22 @@ trait WithSepultamentoQuery
             ->when($this->searchSepultamentoAte, fn ($q) => $q->whereDate('data_sepultamento', '<=', $this->searchSepultamentoAte))
 
             // -------------------------
+            // Filtros de Ano / Mês / Dia (inteligentes)
+            // -------------------------
+
+            // Se informou o ano → aplica whereYear
+            ->when($this->searchAno, fn ($q) => $q->whereYear('data_sepultamento', $this->searchAno)
+            )
+
+            // Se informou o mês (pode ter ano junto ou não)
+            ->when($this->searchMes, fn ($q) => $q->whereMonth('data_sepultamento', $this->searchMes)
+            )
+
+            // Se informou o dia (pode ter ano/mes junto ou não)
+            ->when($this->searchDia, fn ($q) => $q->whereDay('data_sepultamento', $this->searchDia)
+            )
+
+            // -------------------------
             // Filtro de status
             // -------------------------
             ->when($this->searchStatus === 'ativo', fn ($q) => $q->where('ativo', true))

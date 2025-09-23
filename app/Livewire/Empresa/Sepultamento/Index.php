@@ -96,6 +96,11 @@ class Index extends Component
     public bool $filtroTranslado = false;
     public bool $filtroMembro = false;
 
+    // Filtros adicionais (selects)
+    public ?int $searchAno = null;
+    public ?int $searchMes = null;
+    public ?int $searchDia = null;
+
     // -------------------------------------------------
     // Regras de validação (CRUD)
     // -------------------------------------------------
@@ -209,6 +214,9 @@ class Index extends Component
             'filtroNatimorto',
             'filtroTranslado',
             'filtroMembro',
+            'searchAno',
+            'searchMes',
+            'searchDia',
         ];
 
         $fieldsToReset = match ($context) {
