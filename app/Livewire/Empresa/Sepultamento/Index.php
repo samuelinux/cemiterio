@@ -6,6 +6,7 @@ use App\Livewire\Empresa\Sepultamento\Traits\WithAuditLogs;
 use App\Livewire\Empresa\Sepultamento\Traits\WithSepultamentoCrud;
 use App\Livewire\Empresa\Sepultamento\Traits\WithSepultamentoExport;
 use App\Livewire\Empresa\Sepultamento\Traits\WithSepultamentoFilters;
+use App\Livewire\Empresa\Sepultamento\Traits\WithSepultamentoQuery;
 use App\Models\CausaMorte;
 use App\Models\Sepultamento;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,7 @@ class Index extends Component
     use WithSepultamentoCrud;
     use WithAuditLogs;
     use WithSepultamentoExport;
+    use WithSepultamentoQuery;
 
     // -------------------------------------------------
     // Flags de UI (modais)
@@ -252,44 +254,9 @@ class Index extends Component
             return view('livewire.empresa.sepultamento.index', compact('sepultamentos'));
         }
 
-        $empresaId = Auth::user()->empresa_id;
-
-        $sepultamentos = Sepultamento::query()
-            ->where('empresa_id', $empresaId)
-            ->when($this->searchNome, fn ($q) => $q->where('nome_falecido', 'like', "%{$this->searchNome}%"))
-            ->when($this->searchMae, fn ($q) => $q->where('mae', 'like', "%{$this->searchMae}%"))
-            ->when($this->searchPai, fn ($q) => $q->where('pai', 'like', "%{$this->searchPai}%"))
-            ->when($this->searchQuadra, fn ($q) => $q->where('quadra', 'like', "%{$this->searchQuadra}%"))
-            ->when($this->searchFila, fn ($q) => $q->where('fila', 'like', "%{$this->searchFila}%"))
-            ->when($this->searchCova, fn ($q) => $q->where('cova', 'like', "%{$this->searchCova}%"))
-            ->when($this->searchFalecimentoDe, fn ($q) => $q->whereDate('data_falecimento', '>=', $this->searchFalecimentoDe))
-            ->when($this->searchFalecimentoAte, fn ($q) => $q->whereDate('data_falecimento', '<=', $this->searchFalecimentoAte))
-            ->when($this->searchSepultamentoDe, fn ($q) => $q->whereDate('data_sepultamento', '>=', $this->searchSepultamentoDe))
-            ->when($this->searchSepultamentoAte, fn ($q) => $q->whereDate('data_sepultamento', '<=', $this->searchSepultamentoAte))
-            ->when($this->searchStatus === 'ativo', fn ($q) => $q->where('ativo', true))
-            ->when($this->searchStatus === 'inativo', fn ($q) => $q->where('ativo', false))
-            ->when(
-                $this->filtroIndigente || $this->filtroNatimorto || $this->filtroTranslado || $this->filtroMembro,
-                function ($consulta) {
-                    $consulta->where(function ($subconsulta) {
-                        if ($this->filtroIndigente) {
-                            $subconsulta->orWhere('indigente', true);
-                        }
-                        if ($this->filtroNatimorto) {
-                            $subconsulta->orWhere('natimorto', true);
-                        }
-                        if ($this->filtroTranslado) {
-                            $subconsulta->orWhere('translado', true);
-                        }
-                        if ($this->filtroMembro) {
-                            $subconsulta->orWhere('membro', true);
-                        }
-                    });
-                }
-            )
-
-            ->orderByDesc('data_sepultamento')
-            ->paginate($this->perPage);
+        $sepultamentos = $this->getQuerySepultamentos()
+    ->orderByDesc('data_sepultamento')
+    ->paginate($this->perPage);
 
         return view('livewire.empresa.sepultamento.index', compact('sepultamentos'));
     }
