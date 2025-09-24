@@ -42,5 +42,8 @@
             @endforeach
         </tbody>
     </table>
+    <div class="total">
+        Total de registros: {{ count(session('sepultamentos_pdf_data', [])) }}
+    </div>
 </body>
 </html>
