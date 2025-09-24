@@ -14,7 +14,6 @@ trait WithSepultamentoExport
 
         // Consulta com todos os campos originais
         $sepultamentos = $this->getQuerySepultamentos()
-            ->orderBy('nome_falecido', 'asc')
             ->get([
                 'nome_falecido',
                 'mae',
