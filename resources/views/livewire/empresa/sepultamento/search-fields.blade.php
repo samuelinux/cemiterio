@@ -47,175 +47,124 @@
     </div>
 
     {{-- Filtros avançados --}}
-    <div x-show="showFilters" x-collapse x-cloak
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 bg-gray-50 border rounded-md p-4">
+<div x-show="showFilters" x-collapse x-cloak
+    class="space-y-4 bg-gray-50 border rounded-md p-4">
 
-        {{-- Mãe --}}
+    {{-- Grupo: Filiação --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 border-b pb-3">
         <div>
             <label class="block text-xs font-medium text-gray-600">Mãe</label>
             <input type="text" wire:model.live.debounce.500ms="searchMae"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm 
-                          focus:border-gray-500 focus:ring-gray-500 text-sm">
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
         </div>
-
-        {{-- Pai --}}
         <div>
             <label class="block text-xs font-medium text-gray-600">Pai</label>
             <input type="text" wire:model.live.debounce.500ms="searchPai"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm 
-                          focus:border-gray-500 focus:ring-gray-500 text-sm">
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
         </div>
+    </div>
 
-        {{-- Datas de falecimento --}}
+    {{-- Grupo: Data do Sepultamento (Ano/Mês/Dia) --}}
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-b pb-3">
+        {{-- Ano --}}
+        <div>
+            <label class="block text-xs font-medium text-gray-600">Ano do Sepultamento</label>
+            <input type="number" wire:model.live.debounce.500ms="searchAno"
+                x-on:input="$el.value = $el.value.replace(/[^0-9]/g, '').slice(0,4)"
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
+        </div>
+        {{-- Mês --}}
+        <div>
+            <label class="block text-xs font-medium text-gray-600">Mês do Sepultamento</label>
+            <input type="number" wire:model.live.debounce.500ms="searchMes"
+                min="1" max="12"
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
+        </div>
+        {{-- Dia --}}
+        <div>
+            <label class="block text-xs font-medium text-gray-600">Dia do Sepultamento</label>
+            <input type="number" wire:model.live.debounce.500ms="searchDia"
+                min="1" max="31"
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
+        </div>
+    </div>
+
+    {{-- Grupo: Datas (falecimento / sepultamento de-ate) --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 border-b pb-3">
         <div>
             <label class="block text-xs font-medium text-gray-600">Falecimento (de)</label>
             <input type="date" wire:model.live.debounce.500ms="searchFalecimentoDe"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm 
-                          focus:border-gray-500 focus:ring-gray-500 text-sm">
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
         </div>
         <div>
             <label class="block text-xs font-medium text-gray-600">Falecimento (até)</label>
             <input type="date" wire:model.live.debounce.500ms="searchFalecimentoAte"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm 
-                          focus:border-gray-500 focus:ring-gray-500 text-sm">
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
         </div>
-
-        {{-- Datas de sepultamento --}}
         <div>
             <label class="block text-xs font-medium text-gray-600">Sepultamento (de)</label>
             <input type="date" wire:model.live.debounce.500ms="searchSepultamentoDe"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm 
-                          focus:border-gray-500 focus:ring-gray-500 text-sm">
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
         </div>
         <div>
             <label class="block text-xs font-medium text-gray-600">Sepultamento (até)</label>
             <input type="date" wire:model.live.debounce.500ms="searchSepultamentoAte"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm 
-                          focus:border-gray-500 focus:ring-gray-500 text-sm">
-        </div>
-
-        {{-- Ano --}}
-        <div x-data>
-            <label class="block text-xs font-medium text-gray-600">Ano do Sepultamento</label>
-            <input type="number" wire:model.live.debounce.500ms="searchAno"
-            x-on:input="$el.value = $el.value.replace(/[^0-9]/g, '').slice(0,4)"
-           x-on:input="$el.value = $el.value.replace(/[^0-9]/g, '').slice(0,4)"
-           x-on:blur="
-                if ($el.value) {
-                    let val = parseInt($el.value);
-                    let anoAtual = new Date().getFullYear();
-                    if (val < 1900) val = 1900;
-                    if (val > anoAtual) val = anoAtual;
-                    $el.value = val;
-                }
-           "
-            placeholder="Ex: 2025"
                 class="mt-1 w-full rounded-md border-gray-300 shadow-sm
-                  focus:border-gray-500 focus:ring-gray-500 text-sm">
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
         </div>
+    </div>
 
-        {{-- Mês --}}
-        <div x-data>
-            <label class="block text-xs font-medium text-gray-600">Mês do Sepultamento</label>
-            <input type="number" wire:model.live.debounce.500ms="searchMes" min="1" max="12"
-                x-on:input="$el.value = $el.value.replace(/[^0-9]/g, '').slice(0,2)"
-           x-on:blur="
-                if ($el.value) {
-                    let val = parseInt($el.value);
-                    if (val < 1) val = 1;
-                    if (val > 12) val = 12;
-                    $el.value = val.toString().padStart(2,'0');
-                }
-           "
-                placeholder="Ex: 5"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
-                  focus:border-gray-500 focus:ring-gray-500 text-sm">
-        </div>
-
-        {{-- Dia --}}
-        <div x-data>
-            <label class="block text-xs font-medium text-gray-600">Dia do Sepultamento</label>
-            <input type="number" wire:model.live.debounce.500ms="searchDia" min="1" max="31"
-            x-on:input="$el.value = $el.value.replace(/[^0-9]/g, '').slice(0,2)"
-           x-on:blur="
-                if ($el.value) {
-                    let val = parseInt($el.value);
-                    if (val < 1) val = 1;
-                    if (val > 31) val = 31;
-                    $el.value = val.toString().padStart(2,'0');
-                }
-           "
-           placeholder="Ex: 15"
-                placeholder="Ex: 15"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
-                  focus:border-gray-500 focus:ring-gray-500 text-sm">
-        </div>
-
-
-        {{-- Localização --}}
+    {{-- Grupo: Localização --}}
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-b pb-3">
         <div>
             <label class="block text-xs font-medium text-gray-600">Quadra</label>
             <input type="text" wire:model.live.debounce.500ms="searchQuadra"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm 
-                          focus:border-gray-500 focus:ring-gray-500 text-sm">
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
         </div>
         <div>
             <label class="block text-xs font-medium text-gray-600">Fila</label>
             <input type="text" wire:model.live.debounce.500ms="searchFila"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm 
-                          focus:border-gray-500 focus:ring-gray-500 text-sm">
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
         </div>
         <div>
             <label class="block text-xs font-medium text-gray-600">Cova</label>
             <input type="text" wire:model.live.debounce.500ms="searchCova"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm 
-                          focus:border-gray-500 focus:ring-gray-500 text-sm">
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
         </div>
+    </div>
 
-        {{-- Status --}}
+    {{-- Grupo: Status --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
             <label class="block text-xs font-medium text-gray-600">Status</label>
             <select wire:model.live.debounce.500ms="searchStatus"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm 
-                           focus:border-gray-500 focus:ring-gray-500 text-sm">
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
                 <option value="">Todos</option>
                 <option value="ativo">Ativos</option>
                 <option value="inativo">Inativos</option>
             </select>
         </div>
-        {{-- Classificação do sepultamento --}}
-        <div class="sm:col-span-2">
-            <label class="block text-xs font-medium text-gray-600">Classificação do sepultamento</label>
-            <div class="mt-2 flex flex-wrap gap-4">
-                <label class="inline-flex items-center gap-2">
-                    <input type="checkbox" wire:model.live="filtroIndigente"
-                        class="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-500">
-                    <span class="text-sm text-gray-800">Indigente</span>
-                </label>
-
-                <label class="inline-flex items-center gap-2">
-                    <input type="checkbox" wire:model.live="filtroNatimorto"
-                        class="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-500">
-                    <span class="text-sm text-gray-800">Natimorto</span>
-                </label>
-
-                <label class="inline-flex items-center gap-2">
-                    <input type="checkbox" wire:model.live="filtroTranslado"
-                        class="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-500">
-                    <span class="text-sm text-gray-800">Translado</span>
-                </label>
-
-                <label class="inline-flex items-center gap-2">
-                    <input type="checkbox" wire:model.live="filtroMembro"
-                        class="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-500">
-                    <span class="text-sm text-gray-800">Membro</span>
-                </label>
-            </div>
-            <p class="mt-1 text-[11px] text-gray-500">
-                Você pode marcar mais de uma opção. A busca trará registros que sejam <strong>qualquer um</strong> dos
-                selecionados.
-            </p>
-        </div>
-
     </div>
+
+    {{-- Grupo: Classificação --}}
+    <div>
+        <label class="block text-xs font-medium text-gray-600">Classificação do sepultamento</label>
+        <div class="mt-2 flex flex-wrap gap-4">
+            {{-- checkboxes --}}
+        </div>
+    </div>
+</div>
+
 </div>
