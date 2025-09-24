@@ -22,6 +22,7 @@
                 <th>Quadra</th>
                 <th>Fila</th>
                 <th>Cova</th>
+                <th>OS</th>
                 <th>Data de Falecimento</th>
                 
             </tr>
@@ -34,6 +35,7 @@
                     <td>{{ $sepultamento['quadra'] }}</td>
                     <td>{{ $sepultamento['fila'] }}</td>
                     <td>{{ $sepultamento['cova'] }}</td>
+                    <td>{{ $sepultamento['ordem_sepultamento'] }}</td>
                     <td>{{ $sepultamento['data_falecimento'] }}</td>
                     
                 </tr>

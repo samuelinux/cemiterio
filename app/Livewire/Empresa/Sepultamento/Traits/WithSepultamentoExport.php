@@ -37,6 +37,7 @@ trait WithSepultamentoExport
                     'quadra' => $sepultamento->quadra ?? '-',
                     'fila' => $sepultamento->fila ?? '-',
                     'cova' => $sepultamento->cova ?? '-',
+                    'ordem_sepultamento' => $sepultamento->ordem_sepultamento, // 👈 incluído aqui
                     'data_falecimento' => $sepultamento->data_falecimento
                         ? \Carbon\Carbon::parse($sepultamento->data_falecimento)->format('d/m/Y') : '-',
                     'data_sepultamento' => $sepultamento->data_sepultamento
