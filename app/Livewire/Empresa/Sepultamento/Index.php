@@ -101,6 +101,22 @@ class Index extends Component
     public ?int $searchMes = null;
     public ?int $searchDia = null;
 
+
+    //
+    public $sortField = 'data_sepultamento'; // padrão
+    public $sortDirection = 'desc';          // padrão
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+
+
     // -------------------------------------------------
     // Regras de validação (CRUD)
     // -------------------------------------------------
@@ -245,7 +261,7 @@ class Index extends Component
             ->where('ativo', true)
             ->orderBy('descricao')
             ->get(['id', 'descricao'])
-            ->map(fn ($c) => ['id' => $c->id, 'descricao' => $c->descricao])
+            ->map(fn($c) => ['id' => $c->id, 'descricao' => $c->descricao])
             ->all();
     }
 
@@ -263,12 +279,12 @@ class Index extends Component
         }
 
         $sepultamentos = $this->getQuerySepultamentos()
-        ->orderByDesc('data_sepultamento')
-        ->paginate($this->perPage);
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
 
         return view('livewire.empresa.sepultamento.index', [
-        'sepultamentos' => $sepultamentos,
-        'total' => $sepultamentos->total(), // 👈 aqui está o count
-    ]);
+            'sepultamentos' => $sepultamentos,
+            'total' => $sepultamentos->total(), // 👈 aqui está o count
+        ]);
     }
 }

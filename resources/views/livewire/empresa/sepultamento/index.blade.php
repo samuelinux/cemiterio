@@ -58,13 +58,40 @@
         <table class="min-w-full divide-y divide-gray-200 bg-white rounded-lg shadow">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nome</th>
-                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Falecimento</th>
-                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Sepultamento</th>
-                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Q / F / C / OS</th>
-                    <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">Ações</th>
+                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer"
+                        wire:click="sortBy('nome_falecido')">
+                        Nome
+                        @if ($sortField === 'nome_falecido')
+                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        @endif
+                    </th>
+
+                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer"
+                        wire:click="sortBy('data_falecimento')">
+                        Falecimento
+                        @if ($sortField === 'data_falecimento')
+                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        @endif
+                    </th>
+
+                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer"
+                        wire:click="sortBy('data_sepultamento')">
+                        Sepultamento
+                        @if ($sortField === 'data_sepultamento')
+                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        @endif
+                    </th>
+
+                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        Q / F / C / OS
+                    </th>
+
+                    <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">
+                        Ações
+                    </th>
                 </tr>
             </thead>
+
             <tbody class="divide-y divide-gray-200">
                 @forelse($sepultamentos as $s)
                     <tr>
