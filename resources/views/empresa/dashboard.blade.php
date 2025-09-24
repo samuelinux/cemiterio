@@ -84,8 +84,8 @@
     <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
         <div class="flex items-center justify-between">
             <div>
-                <h3 class="text-lg font-medium text-blue-900">Registar Novo Sepultamento</h3>
-                <p class="text-blue-700 mt-1">Adicione um novo registo de sepultamento ao sistema.</p>
+                <h3 class="text-lg font-medium text-blue-900">Registrar Novo Sepultamento</h3>
+                <p class="text-blue-700 mt-1">Adicione um novo registro de sepultamento ao sistema.</p>
             </div>
             <div>
                 <a href="{{ route('empresa.sepultamentos.index', auth()->user()->empresa->slug) }}" 
