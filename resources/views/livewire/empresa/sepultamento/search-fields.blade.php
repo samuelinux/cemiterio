@@ -48,7 +48,7 @@
 
     {{-- Filtros avançados --}}
 <div x-show="showFilters" x-collapse x-cloak
-    class="space-y-4 bg-gray-50 border rounded-md p-4">
+    class="space-y-4 bg-gray-300 border rounded-md p-4">
 
     {{-- Grupo: Filiação --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 border-b pb-3">
@@ -68,22 +68,7 @@
 
     {{-- Grupo: Data do Sepultamento (Ano/Mês/Dia) --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-b pb-3">
-        {{-- Ano --}}
-        <div>
-            <label class="block text-xs font-medium text-gray-600">Ano do Sepultamento</label>
-            <input type="number" wire:model.live.debounce.500ms="searchAno"
-                x-on:input="$el.value = $el.value.replace(/[^0-9]/g, '').slice(0,4)"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-gray-500 focus:ring-gray-500 text-sm">
-        </div>
-        {{-- Mês --}}
-        <div>
-            <label class="block text-xs font-medium text-gray-600">Mês do Sepultamento</label>
-            <input type="number" wire:model.live.debounce.500ms="searchMes"
-                min="1" max="12"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-gray-500 focus:ring-gray-500 text-sm">
-        </div>
+
         {{-- Dia --}}
         <div>
             <label class="block text-xs font-medium text-gray-600">Dia do Sepultamento</label>
@@ -92,6 +77,25 @@
                 class="mt-1 w-full rounded-md border-gray-300 shadow-sm
                        focus:border-gray-500 focus:ring-gray-500 text-sm">
         </div>
+
+        {{-- Mês --}}
+        <div>
+            <label class="block text-xs font-medium text-gray-600">Mês do Sepultamento</label>
+            <input type="number" wire:model.live.debounce.500ms="searchMes"
+                min="1" max="12"
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
+        </div>
+        {{-- Ano --}}
+        <div>
+            <label class="block text-xs font-medium text-gray-600">Ano do Sepultamento</label>
+            <input type="number" wire:model.live.debounce.500ms="searchAno"
+                x-on:input="$el.value = $el.value.replace(/[^0-9]/g, '').slice(0,4)"
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                       focus:border-gray-500 focus:ring-gray-500 text-sm">
+        </div>
+        
+        
     </div>
 
     {{-- Grupo: Datas (falecimento / sepultamento de-ate) --}}
