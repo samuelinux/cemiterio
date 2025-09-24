@@ -133,7 +133,7 @@
                 <div class="mt-1 text-sm text-gray-600">
                     <div>Falecimento: {{ $s->data_falecimento?->format('d/m/Y') ?? '-' }}</div>
                     <div>Sepultamento: {{ $s->data_sepultamento?->format('d/m/Y') ?? '-' }}</div>
-                    <div>Q: {{ $s->quadra ?? '-' }}/ F: {{ $s->fila ?? '-' }}/ C: {{ $s->cova ?? '-' }}/ N°S: {{ $s->ordem_sepultamento ?? '-'  }}</div>
+                    <div>Q: {{ $s->quadra ?? '-' }}/ F: {{ $s->fila ?? '-' }}/ C: {{ $s->cova ?? '-' }}/ OS: {{ $s->ordem_sepultamento ?? '-'  }}</div>
                 </div>
 
                 <div class="mt-3 flex justify-end gap-2">
