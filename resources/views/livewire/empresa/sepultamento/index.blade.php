@@ -79,9 +79,10 @@
                             {{ $s->data_sepultamento?->format('d/m/Y') ?? '-' }}
                         </td>
                         <td class="px-3 py-2 text-sm text-gray-600">
-                            {{ $s->quadra ?? '-' }} / {{ $s->fila ?? '-' }} / {{ $s->cova ?? '-' }} / {{ $s->ordem_sepultamento }}
+                            {{ $s->quadra ?? '-' }} / {{ $s->fila ?? '-' }} / {{ $s->cova ?? '-' }} /
+                            {{ $s->ordem_sepultamento }}
                         </td>
-                        
+
                         <td class="px-3 py-2 text-right">
                             <div class="inline-flex items-center gap-2">
                                 @if ($s->certidao_obito_path)
@@ -133,7 +134,8 @@
                 <div class="mt-1 text-sm text-gray-600">
                     <div>Falecimento: {{ $s->data_falecimento?->format('d/m/Y') ?? '-' }}</div>
                     <div>Sepultamento: {{ $s->data_sepultamento?->format('d/m/Y') ?? '-' }}</div>
-                    <div>Q: {{ $s->quadra ?? '-' }}/ F: {{ $s->fila ?? '-' }}/ C: {{ $s->cova ?? '-' }}/ OS: {{ $s->ordem_sepultamento ?? '-'  }}</div>
+                    <div>Q: {{ $s->quadra ?? '-' }}/ F: {{ $s->fila ?? '-' }}/ C: {{ $s->cova ?? '-' }}/ OS:
+                        {{ $s->ordem_sepultamento ?? '-' }}</div>
                 </div>
 
                 <div class="mt-3 flex justify-end gap-2">
@@ -215,5 +217,8 @@
                 </div>
             </form>
         </div>
+    </div>
+    <div class="text-sm text-gray-600 mb-2">
+        Total encontrados: {{ $total }}
     </div>
 </div>

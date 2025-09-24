@@ -263,9 +263,12 @@ class Index extends Component
         }
 
         $sepultamentos = $this->getQuerySepultamentos()
-    ->orderByDesc('data_sepultamento')
-    ->paginate($this->perPage);
+        ->orderByDesc('data_sepultamento')
+        ->paginate($this->perPage);
 
-        return view('livewire.empresa.sepultamento.index', compact('sepultamentos'));
+        return view('livewire.empresa.sepultamento.index', [
+        'sepultamentos' => $sepultamentos,
+        'total' => $sepultamentos->total(), // 👈 aqui está o count
+    ]);
     }
 }
