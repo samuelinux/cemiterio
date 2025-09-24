@@ -279,7 +279,6 @@ class Index extends Component
         }
 
         $sepultamentos = $this->getQuerySepultamentos()
-            ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
 
         return view('livewire.empresa.sepultamento.index', [

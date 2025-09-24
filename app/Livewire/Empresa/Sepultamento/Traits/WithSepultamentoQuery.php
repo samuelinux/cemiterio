@@ -75,6 +75,7 @@ trait WithSepultamentoQuery
             ->when($this->filtroNatimorto, fn($q) => $q->where('natimorto', true))
             ->when($this->filtroTranslado, fn($q) => $q->where('translado', true))
             ->when($this->filtroMembro, fn($q) => $q->where('membro', true))
+            ->orderBy($this->sortField, $this->sortDirection);
         ;
     }
 }
