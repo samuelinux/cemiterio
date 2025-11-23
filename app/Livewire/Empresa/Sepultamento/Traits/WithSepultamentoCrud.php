@@ -43,7 +43,10 @@ trait WithSepultamentoCrud
                 $data = $this->formData($empresaId, $userId);
 
                 if ($this->certidao_obito) {
-                    $data['certidao_obito_path'] = $this->certidao_obito->store('certidoes', 'public');
+                    // Armazena apenas o nome do arquivo, não o caminho completo
+                    $fileName = $this->certidao_obito->store('certidoes', 'public');
+                    // Remove o prefixo 'certidoes/' para armazenar apenas o nome do arquivo
+                    $data['certidao_obito_path'] = basename($fileName);
                 }
 
                 $s = Sepultamento::create($data);
@@ -118,7 +121,10 @@ trait WithSepultamentoCrud
                     if ($s->certidao_obito_path) {
                         Storage::disk('public')->delete($s->certidao_obito_path);
                     }
-                    $data['certidao_obito_path'] = $this->certidao_obito->store('certidoes', 'public');
+                    // Armazena apenas o nome do arquivo, não o caminho completo
+                    $fileName = $this->certidao_obito->store('certidoes', 'public');
+                    // Remove o prefixo 'certidoes/' para armazenar apenas o nome do arquivo
+                    $data['certidao_obito_path'] = basename($fileName);
                 }
 
                 $s->update($data);

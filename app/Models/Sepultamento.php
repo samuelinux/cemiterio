@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class Sepultamento extends Model
 {
@@ -68,25 +69,21 @@ class Sepultamento extends Model
     {
         // Geração do ano + número sequencial por empresa/ano
         static::creating(function (Sepultamento $m) {
-            // Define ano_ref a partir de data_sepultamento (ou ano atual se não houver)
-            if (empty($m->ano_referencia)) {
-                $m->ano_referencia = $m->data_sepultamento
-                    ? Carbon::parse($m->data_sepultamento)->year
-                    : now()->year;
-            }
+            // Sempre regenerar o ano_referencia com base na data_sepultamento
+            $m->ano_referencia = $m->data_sepultamento
+                ? Carbon::parse($m->data_sepultamento)->year
+                : now()->year;
 
-            // Se não veio número, gera o próximo disponível
-            if (empty($m->numero_sepultamento)) {
-                DB::transaction(function () use ($m) {
-                    $max = self::query()
-                        ->where('empresa_id', $m->empresa_id)
-                        ->where('ano_referencia', $m->ano_referencia)
-                        ->lockForUpdate()
-                        ->max('numero_sepultamento');
+            // Sempre regenerar o número sequencial
+            DB::transaction(function () use ($m) {
+                $max = self::query()
+                    ->where('empresa_id', $m->empresa_id)
+                    ->where('ano_referencia', $m->ano_referencia)
+                    ->lockForUpdate()
+                    ->max('numero_sepultamento');
 
-                    $m->numero_sepultamento = (int) ($max ?? 0) + 1;
-                });
-            }
+                $m->numero_sepultamento = (int) ($max ?? 0) + 1;
+            });
         });
     }
 
@@ -100,5 +97,19 @@ class Sepultamento extends Model
     public function scopePorEmpresa($query, int $empresaId)
     {
         return $query->where('empresa_id', $empresaId);
+    }
+    
+    // Accessor para URL da certidão de óbito
+    public function getCertidaoObitoUrlAttribute()
+    {
+        if ($this->certidao_obito_path) {
+            // Se o caminho já contém o diretório certidoes, retorna diretamente
+            if (str_starts_with($this->certidao_obito_path, 'certidoes/')) {
+                return Storage::url($this->certidao_obito_path);
+            }
+            // Caso contrário, adiciona o diretório certidoes ao caminho
+            return Storage::url('certidoes/' . $this->certidao_obito_path);
+        }
+        return null;
     }
 }
