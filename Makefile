@@ -91,6 +91,7 @@ permissao:
 	sudo chmod -R 777 -R ./
 	sudo chown -R samuel:samuel ./*
 	sudo chown -R samuel:samuel ./
+	sudo chmod -R 777 -R storage/
 
 git-reset-hard:
 	git reset --hard origin/$(git rev-parse --abbrev-ref HEAD) && git clean -fd && git pull
