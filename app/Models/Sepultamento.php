@@ -76,10 +76,11 @@ class Sepultamento extends Model
 
             // Sempre regenerar o número sequencial
             DB::transaction(function () use ($m) {
+                // Pegar o último número sequencial, incluindo registros deletados
                 $max = self::query()
                     ->where('empresa_id', $m->empresa_id)
                     ->where('ano_referencia', $m->ano_referencia)
-                    ->lockForUpdate()
+                    ->withTrashed() // Incluir registros deletados
                     ->max('numero_sepultamento');
 
                 $m->numero_sepultamento = (int) ($max ?? 0) + 1;
