@@ -41,9 +41,6 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            // índices e unicidades
-            $table->unique(['empresa_id','ano_referencia','numero_sepultamento'], 'sepultamento_numero_unique');
-
             $table->index(['empresa_id', 'data_sepultamento'], 'sepultamento_empresa_data_idx');
             $table->index(['empresa_id', 'nome_falecido'], 'sepultamento_empresa_nome_idx');
             $table->index(['empresa_id', 'quadra', 'fila', 'cova'], 'sepultamento_local_idx');

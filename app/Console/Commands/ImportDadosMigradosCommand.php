@@ -17,14 +17,14 @@ class ImportDadosMigradosCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'import:dados-migrados {--validate-only : Apenas valida os dados sem inserir} {--stop-on-error : Para na primeira falha} {--auto-sequence : Gera números sequenciais automaticamente} {--sequential : Processa registros sequencialmente} {--retry=3 : Número de tentativas em caso de falha}';
+    protected $signature = 'import:dados-migrados {--validate-only : Apenas valida os dados sem inserir} {--stop-on-error : Para na primeira falha}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Importa dados do arquivo dados_migrados_final.json';
+    protected $description = 'Importa dados do arquivo dados_migrados_final.json ordenando por data de falecimento/sepultamento';
 
     /**
      * Execute the console command.
@@ -97,13 +97,6 @@ class ImportDadosMigradosCommand extends Command
             $item['membro'] = (bool) ($item['membro'] ?? false);
             $item['ativo'] = (bool) ($item['ativo'] ?? true);
 
-            // Define ano_referencia se estiver nulo
-            if (empty($item['ano_referencia'])) {
-                $item['ano_referencia'] = !empty($item['data_sepultamento']) 
-                    ? Carbon::parse($item['data_sepultamento'])->year 
-                    : now()->year;
-            }
-
             // Verifica formato das datas
             if (!empty($item['data_falecimento']) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $item['data_falecimento'])) {
                 $errors[] = "Registro #{$index}: Formato inválido para data_falecimento";
@@ -143,81 +136,67 @@ class ImportDadosMigradosCommand extends Command
             return 0;
         }
 
+        // Ordena os dados por data de falecimento ou data de sepultamento
+        usort($validatedData, function ($a, $b) {
+            // Usa data de sepultamento se disponível, senão usa data de falecimento
+            $dateA = !empty($a['data_sepultamento']) ? $a['data_sepultamento'] : $a['data_falecimento'];
+            $dateB = !empty($b['data_sepultamento']) ? $b['data_sepultamento'] : $b['data_falecimento'];
+            
+            // Se ambas forem nulas, mantém a ordem original
+            if (empty($dateA) && empty($dateB)) {
+                return 0;
+            }
+            
+            // Se uma for nula, coloca ela depois
+            if (empty($dateA)) {
+                return 1;
+            }
+            
+            if (empty($dateB)) {
+                return -1;
+            }
+            
+            // Compara as datas
+            return strcmp($dateA, $dateB);
+        });
+
+        $this->info('Dados ordenados por data de falecimento/sepultamento.');
+
         // Confirmação antes de inserir
-        if (!$this->confirm('Deseja realmente inserir ' . count($validatedData) . ' registros no banco de dados?')) {
+        if (!$this->confirm('Deseja realmente inserir ' . count($validatedData) . ' registros no banco de dados na ordem cronológica?')) {
             $this->info('Operação cancelada.');
             return 0;
         }
 
         // Inserção dos dados
-        $this->info('Inserindo dados...');
+        $this->info('Inserindo dados na ordem cronológica...');
         $bar = $this->output->createProgressBar(count($validatedData));
         $bar->start();
 
         $successCount = 0;
         $failCount = 0;
         $stopOnError = $this->option('stop-on-error');
-        $sequential = $this->option('sequential');
-        $maxRetries = $this->option('retry');
 
         foreach ($validatedData as $index => $item) {
             $bar->advance();
             
-            $retries = 0;
-            $inserted = false;
-            
-            while ($retries < $maxRetries && !$inserted) {
-                try {
-                    // Remove campos que não devem ser inseridos diretamente
-                    unset($item['causas']); // Se houver relacionamentos de causas, eles precisam ser tratados separadamente
-                    
-                    // Se a opção --auto-sequence estiver ativa, remover completamente os campos para deixar o modelo gerar
-                    if ($this->option('auto-sequence')) {
-                        // Remover campos que podem causar conflitos
-                        unset($item['ano_referencia']);
-                        unset($item['numero_sepultamento']);
-                        
-                        // Garantir que não há valores nulos ou vazios que possam causar problemas
-                        foreach (['ano_referencia', 'numero_sepultamento'] as $field) {
-                            if (isset($item[$field]) && (is_null($item[$field]) || $item[$field] === '' || $item[$field] === 0)) {
-                                unset($item[$field]);
-                            }
-                        }
-                        
-                        // Debug: mostrar informações do registro
-                        // if ($index <= 5) {
-                        //     $this->info("Registro #{$index} após remoção: ano_referencia=" . (isset($item['ano_referencia']) ? $item['ano_referencia'] : 'NULO') . ", numero_sepultamento=" . (isset($item['numero_sepultamento']) ? $item['numero_sepultamento'] : 'NULO'));
-                        // }
-                    }
-                    
-                    // Criar o registro - o modelo vai gerar automaticamente ano_referencia e numero_sepultamento
-                    Sepultamento::create($item);
-                    $successCount++;
-                    $inserted = true;
-                } catch (\Exception $e) {
-                    $retries++;
-                    
-                    // Se for erro de duplicata e estiver usando auto-sequence, tenta novamente
-                    if (strpos($e->getMessage(), 'Duplicate entry') !== false && $this->option('auto-sequence')) {
-                        if ($retries < $maxRetries) {
-                            // Aguarda um pouco antes de tentar novamente
-                            usleep(1000000); // 1 segundo
-                            continue;
-                        }
-                    }
-                    
-                    $failCount++;
-                    $this->error("Erro ao inserir registro #{$index} (tentativa {$retries}): " . $e->getMessage());
-                    
-                    // Se a opção --stop-on-error estiver ativa, para a execução imediatamente
-                    if ($stopOnError) {
-                        $this->error("Execução interrompida devido a erro no primeiro registro. Registros processados: {$successCount} sucesso(s), {$failCount} falha(s).");
-                        $bar->finish();
-                        $this->newLine();
-                        return 1;
-                    }
-                    
-                    break;
+            try {
+                // Remove campos que não devem ser inseridos diretamente
+                unset($item['causas']); // Se houver relacionamentos de causas, eles precisam ser tratados separadamente
+                
+                // Criar o registro - o modelo vai gerar automaticamente ano_referencia e numero_sepultamento
+                Sepultamento::create($item);
+                $successCount++;
+            } catch (\Exception $e) {
+                $failCount++;
+                $this->error("Erro ao inserir registro #{$index}: " . $e->getMessage());
+                
+                // Se a opção --stop-on-error estiver ativa, para a execução imediatamente
+                if ($stopOnError) {
+                    $this->error("Execução interrompida devido a erro no primeiro registro. Registros processados: {$successCount} sucesso(s), {$failCount} falha(s).");
+                    $bar->finish();
+                    $this->newLine();
+                    return 1;
                 }
             }
         }
