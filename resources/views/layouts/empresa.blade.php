@@ -101,7 +101,7 @@
                         <div class="flex items-center md:absolute md:right-0 md:inset-y-0 lg:hidden xl:col-span-4">
                             <!-- User menu for mobile -->
                             <div class="flex-shrink-0 relative ml-5">
-                                <span class="text-sm text-gray-700">{{ auth()->user()->name }}</span>
+                                
                             </div>
                         </div>
                     </div>
