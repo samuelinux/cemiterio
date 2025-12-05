@@ -95,7 +95,7 @@
             @error('certidao_obito') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             @if($certidao_obito_path)
                 <div class="mt-2 text-sm text-gray-600">
-                    Arquivo atual: <a href="{{ $this->sepultamentoId ? $_instance->getCertidaoObitoUrlAttribute() : Storage::url($certidao_obito_path) }}" target="_blank" class="text-blue-600 hover:underline">Visualizar PDF</a>
+                    Arquivo atual: <a href="{{ $this->sepultamentoId ? App\Models\Sepultamento::find($this->sepultamentoId)->certidao_obito_url : Storage::url($certidao_obito_path) }}" target="_blank" class="text-blue-600 hover:underline">Visualizar PDF</a>
                 </div>
             @endif
         </div>
