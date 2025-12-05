@@ -112,7 +112,7 @@
 
                         <td class="px-3 py-2 text-right">
                             <div class="inline-flex items-center gap-2">
-                                @if ($s->certidao_obito_path)
+                                @if ($s->certidao_obito_path && auth()->user()->hasPermissao('sepultamentos', 'editar'))
                                     <a href="{{ $s->certidao_obito_url }}" target="_blank"
                                         class="px-3 py-1.5 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -166,7 +166,7 @@
                 </div>
 
                 <div class="mt-3 flex justify-end gap-2">
-                    @if ($s->certidao_obito_path)
+                    @if ($s->certidao_obito_path && auth()->user()->hasPermissao('sepultamentos', 'editar'))
                         <a href="{{ $s->certidao_obito_url }}" target="_blank"
                             class="px-3 py-1.5 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
