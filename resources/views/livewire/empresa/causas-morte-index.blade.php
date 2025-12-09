@@ -106,21 +106,30 @@
     {{-- MODAL: Criar --}}
     <div x-show="showCreate" x-cloak class="fixed inset-0 z-50 flex items-center justify-center">
         <div class="absolute inset-0 bg-black/40" @click="showCreate = false; $wire.closeModals()"></div>
-        <div class="relative bg-white w-full max-w-lg mx-4 rounded-xl shadow p-6">
+        <div class="relative bg-white w-full max-w-5xl mx-4 rounded-xl shadow p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Nova Causa de Morte</h3>
 
             <form wire:submit.prevent="store" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Descrição *</label>
-                    <input type="text" wire:model.blur="descricao"
-                           class="mt-1 block w-full border rounded-md p-2 focus:ring-gray-500 focus:border-gray-500">
-                    @error('descricao') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
-                </div>
+    <label class="block text-sm font-medium text-gray-700">Descrição *</label>
+
+    <textarea
+        rows="6"
+        maxlength="2500"
+        wire:model.blur="descricao"
+        placeholder="Digite a descrição completa..."
+        class="mt-1 block w-full border rounded-md p-4 focus:ring-gray-500 focus:border-gray-500 resize-none"
+    ></textarea>
+
+    @error('descricao')
+        <span class="text-red-600 text-sm">{{ $message }}</span>
+    @enderror
+</div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Código CID-10</label>
-                    <input type="text" wire:model.blur="codigo_cid10"
-                           class="mt-1 block w-full border rounded-md p-2 focus:ring-gray-500 focus:border-gray-500">
+                    <input type="text" wire:model.blur="codigo_cid10" maxlength="200"
+                           class="mt-1 block w-full border rounded-md py-2 focus:ring-gray-500 focus:border-gray-500">
                     @error('codigo_cid10') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                 </div>
 
