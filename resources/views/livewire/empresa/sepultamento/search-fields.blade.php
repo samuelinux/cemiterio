@@ -66,7 +66,7 @@
         </div>
     </div>
 
-    {{-- Grupo: Data do Sepultamento (Ano/Mês/Dia) --}}
+    {{-- Grupo: Data do Sepultamento (Ano/Mês/Dia) --}} <!--
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-b pb-3">
 
         {{-- Dia --}}
@@ -96,7 +96,7 @@
         </div>
         
         
-    </div>
+    </div> -->
 
     {{-- Grupo: Datas (falecimento / sepultamento de-ate) --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 border-b pb-3">
