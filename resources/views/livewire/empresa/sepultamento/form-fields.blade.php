@@ -35,23 +35,29 @@
         </div>
 
         {{-- Datas --}}
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Data de falecimento</label>
-            <input type="date" wire:model.live="data_falecimento"
-                   class="mt-1 w-full rounded-md bg-white border border-gray-300 shadow-sm
-                          focus:border-gray-500 focus:ring focus:ring-gray-200
-                          px-3 py-2 text-sm text-gray-900 transition">
-            @error('data_falecimento') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-        </div>
+<div>
+    <label class="block text-sm font-medium text-gray-700">Data de falecimento</label>
+    <input type="text" wire:model.live="data_falecimento"
+           placeholder="dd/mm/aaaa"
+           x-data
+           x-mask="99/99/9999"
+           class="mt-1 w-full rounded-md bg-white border border-gray-300 shadow-sm
+                  focus:border-gray-500 focus:ring focus:ring-gray-200
+                  px-3 py-2 text-sm text-gray-900 transition">
+    @error('data_falecimento') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+</div>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Data de sepultamento</label>
-            <input type="date" wire:model.live="data_sepultamento"
-                   class="mt-1 w-full rounded-md bg-white border border-gray-300 shadow-sm
-                          focus:border-gray-500 focus:ring focus:ring-gray-200
-                          px-3 py-2 text-sm text-gray-900 transition">
-            @error('data_sepultamento') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-        </div>
+<div>
+    <label class="block text-sm font-medium text-gray-700">Data de sepultamento</label>
+    <input type="text" wire:model.live="data_sepultamento"
+           placeholder="dd/mm/aaaa"
+           x-data
+           x-mask="99/99/9999"
+           class="mt-1 w-full rounded-md bg-white border border-gray-300 shadow-sm
+                  focus:border-gray-500 focus:ring focus:ring-gray-200
+                  px-3 py-2 text-sm text-gray-900 transition">
+    @error('data_sepultamento') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+</div>
 
         {{-- Localização --}}
         <div>

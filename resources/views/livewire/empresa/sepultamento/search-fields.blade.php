@@ -99,32 +99,44 @@
     </div> -->
 
     {{-- Grupo: Datas (falecimento / sepultamento de-ate) --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 border-b pb-3">
-        <div>
-            <label class="block text-xs font-medium text-gray-600">Falecimento (de)</label>
-            <input type="date" wire:model.live.debounce.500ms="searchFalecimentoDe"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-gray-500 focus:ring-gray-500 text-sm">
-        </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-600">Falecimento (até)</label>
-            <input type="date" wire:model.live.debounce.500ms="searchFalecimentoAte"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-gray-500 focus:ring-gray-500 text-sm">
-        </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-600">Sepultamento (de)</label>
-            <input type="date" wire:model.live.debounce.500ms="searchSepultamentoDe"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-gray-500 focus:ring-gray-500 text-sm">
-        </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-600">Sepultamento (até)</label>
-            <input type="date" wire:model.live.debounce.500ms="searchSepultamentoAte"
-                class="mt-1 w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-gray-500 focus:ring-gray-500 text-sm">
-        </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 border-b pb-3">
+    <div>
+        <label class="block text-xs font-medium text-gray-600">Falecimento (de)</label>
+        <input type="text" wire:model.live.debounce.500ms="searchFalecimentoDe"
+            placeholder="dd/mm/aaaa"
+            x-data
+            x-mask="99/99/9999"
+            class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                   focus:border-gray-500 focus:ring-gray-500 text-sm">
     </div>
+    <div>
+        <label class="block text-xs font-medium text-gray-600">Falecimento (até)</label>
+        <input type="text" wire:model.live.debounce.500ms="searchFalecimentoAte"
+            placeholder="dd/mm/aaaa"
+            x-data
+            x-mask="99/99/9999"
+            class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                   focus:border-gray-500 focus:ring-gray-500 text-sm">
+    </div>
+    <div>
+        <label class="block text-xs font-medium text-gray-600">Sepultamento (de)</label>
+        <input type="text" wire:model.live.debounce.500ms="searchSepultamentoDe"
+            placeholder="dd/mm/aaaa"
+            x-data
+            x-mask="99/99/9999"
+            class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                   focus:border-gray-500 focus:ring-gray-500 text-sm">
+    </div>
+    <div>
+        <label class="block text-xs font-medium text-gray-600">Sepultamento (até)</label>
+        <input type="text" wire:model.live.debounce.500ms="searchSepultamentoAte"
+            placeholder="dd/mm/aaaa"
+            x-data
+            x-mask="99/99/9999"
+            class="mt-1 w-full rounded-md border-gray-300 shadow-sm
+                   focus:border-gray-500 focus:ring-gray-500 text-sm">
+    </div>
+</div>
 
     {{-- Grupo: Localização --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-b pb-3">
