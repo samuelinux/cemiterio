@@ -203,8 +203,8 @@ trait WithSepultamentoCrud
         $this->natimorto = $sepultamento->natimorto;
         $this->translado = $sepultamento->translado;
         $this->membro = $sepultamento->membro;
-        $this->data_falecimento = $sepultamento->data_falecimento ? $sepultamento->data_falecimento->format('Y-m-d') : null;
-        $this->data_sepultamento = $sepultamento->data_sepultamento ? $sepultamento->data_sepultamento->format('Y-m-d') : null;
+        $this->data_falecimento = $sepultamento->data_falecimento ? $sepultamento->data_falecimento->format('d/m/Y') : null;
+        $this->data_sepultamento = $sepultamento->data_sepultamento ? $sepultamento->data_sepultamento->format('d/m/Y') : null;
         $this->quadra = $sepultamento->quadra;
         $this->fila = $sepultamento->fila;
         $this->cova = $sepultamento->cova;
