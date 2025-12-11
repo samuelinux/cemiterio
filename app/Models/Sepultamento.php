@@ -63,7 +63,7 @@ class Sepultamento extends Model
     public function causas()
     {
         return $this->belongsToMany(CausaMorte::class, 'sepultamento_causa', 'sepultamento_id', 'causa_morte_id')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     protected static function booted(): void
@@ -71,8 +71,10 @@ class Sepultamento extends Model
         // Geração do ano + número sequencial por empresa/ano
         static::creating(function (Sepultamento $m) {
             // Sempre regenerar o ano_referencia com base na data_sepultamento
-            $m->ano_referencia = $m->data_sepultamento
-                ? Carbon::parse($m->data_sepultamento)->year
+            // Usar o atributo raw (banco de dados) em vez do valor formatado
+            $rawDataSepultamento = $m->getAttributes()['data_sepultamento'] ?? null;
+            $m->ano_referencia = $rawDataSepultamento
+                ? Carbon::createFromFormat('Y-m-d', substr($rawDataSepultamento, 0, 10))->year
                 : now()->year;
 
             // Sempre regenerar o número sequencial
@@ -100,7 +102,7 @@ class Sepultamento extends Model
     {
         return $query->where('empresa_id', $empresaId);
     }
-    
+
     // Accessor para URL da certidão de óbito
     public function getCertidaoObitoUrlAttribute()
     {
@@ -176,5 +178,4 @@ class Sepultamento extends Model
         }
         return $value;
     }
-
 }

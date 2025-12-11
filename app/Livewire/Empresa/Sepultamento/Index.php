@@ -278,12 +278,27 @@ class Index extends Component
             return view('livewire.empresa.sepultamento.index', compact('sepultamentos'));
         }
 
+        // Debug - verificar se há registros
+        $empresaId = Auth::user()->empresa_id;
+        $totalRegistros = Sepultamento::where('empresa_id', $empresaId)->count();
+        \Log::info('Debug sepultamentos', [
+            'empresa_id' => $empresaId,
+            'total_registros' => $totalRegistros,
+            'can_list' => $this->canList,
+            'filtros' => [
+                'searchFalecimentoDe' => $this->searchFalecimentoDe,
+                'searchFalecimentoAte' => $this->searchFalecimentoAte,
+                'searchSepultamentoDe' => $this->searchSepultamentoDe,
+                'searchSepultamentoAte' => $this->searchSepultamentoAte,
+            ]
+        ]);
+
         $sepultamentos = $this->getQuerySepultamentos()
             ->paginate($this->perPage);
 
         return view('livewire.empresa.sepultamento.index', [
             'sepultamentos' => $sepultamentos,
-            'total' => $sepultamentos->total(), // 👈 aqui está o count
+            'total' => $sepultamentos->total(),
         ]);
     }
 }
