@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\Auditavel;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -113,4 +114,67 @@ class Sepultamento extends Model
         }
         return null;
     }
+
+    /**
+     * Converte data do formato brasileiro (dd/mm/yyyy) para ISO (yyyy-mm-dd) antes de salvar
+     */
+    public function setDataFalecimentoAttribute($value)
+    {
+        if ($value && preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
+            $date = DateTime::createFromFormat('d/m/Y', $value);
+            if ($date) {
+                $this->attributes['data_falecimento'] = $date->format('Y-m-d');
+            } else {
+                $this->attributes['data_falecimento'] = $value;
+            }
+        } else {
+            $this->attributes['data_falecimento'] = $value;
+        }
+    }
+
+    /**
+     * Converte data do formato brasileiro (dd/mm/yyyy) para ISO (yyyy-mm-dd) antes de salvar
+     */
+    public function setDataSepultamentoAttribute($value)
+    {
+        if ($value && preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
+            $date = DateTime::createFromFormat('d/m/Y', $value);
+            if ($date) {
+                $this->attributes['data_sepultamento'] = $date->format('Y-m-d');
+            } else {
+                $this->attributes['data_sepultamento'] = $value;
+            }
+        } else {
+            $this->attributes['data_sepultamento'] = $value;
+        }
+    }
+
+    /**
+     * Converte data do formato ISO (yyyy-mm-dd) para brasileiro (dd/mm/yyyy) ao recuperar
+     */
+    public function getDataFalecimentoAttribute($value)
+    {
+        if ($value && preg_match('/^\d{4}-\d{2}-\d{2}/', $value)) {
+            $date = DateTime::createFromFormat('Y-m-d', substr($value, 0, 10));
+            if ($date) {
+                return $date->format('d/m/Y');
+            }
+        }
+        return $value;
+    }
+
+    /**
+     * Converte data do formato ISO (yyyy-mm-dd) para brasileiro (dd/mm/yyyy) ao recuperar
+     */
+    public function getDataSepultamentoAttribute($value)
+    {
+        if ($value && preg_match('/^\d{4}-\d{2}-\d{2}/', $value)) {
+            $date = DateTime::createFromFormat('Y-m-d', substr($value, 0, 10));
+            if ($date) {
+                return $date->format('d/m/Y');
+            }
+        }
+        return $value;
+    }
+
 }

@@ -100,10 +100,10 @@
                             <div class="text-xs text-gray-500">{{ $s->numeroFormatado() }}</div>
                         </td>
                         <td class="px-3 py-2 text-sm text-gray-600">
-                            {{ $s->data_falecimento?->format('d/m/Y') ?? '-' }}
+                            {{ $s->data_falecimento ?? '-' }}
                         </td>
                         <td class="px-3 py-2 text-sm text-gray-600">
-                            {{ $s->data_sepultamento?->format('d/m/Y') ?? '-' }}
+                            {{ $s->data_sepultamento ?? '-' }}
                         </td>
                         <td class="px-3 py-2 text-sm text-gray-600">
                             {{ $s->quadra ?? '-' }} / {{ $s->fila ?? '-' }} / {{ $s->cova ?? '-' }} /
@@ -159,8 +159,8 @@
                 <div class="text-xs text-gray-500">{{ $s->numeroFormatado() }}</div>
 
                 <div class="mt-1 text-sm text-gray-600">
-                    <div>Falecimento: {{ $s->data_falecimento?->format('d/m/Y') ?? '-' }}</div>
-                    <div>Sepultamento: {{ $s->data_sepultamento?->format('d/m/Y') ?? '-' }}</div>
+                    <div>Falecimento: {{ $s->data_falecimento ?? '-' }}</div>
+                    <div>Sepultamento: {{ $s->data_sepultamento ?? '-' }}</div>
                     <div>Q: {{ $s->quadra ?? '-' }}/ F: {{ $s->fila ?? '-' }}/ C: {{ $s->cova ?? '-' }}/ OS:
                         {{ $s->ordem_sepultamento ?? '-' }}</div>
                 </div>
