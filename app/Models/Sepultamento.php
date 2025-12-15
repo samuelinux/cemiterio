@@ -122,7 +122,13 @@ class Sepultamento extends Model
      */
     public function setDataFalecimentoAttribute($value)
     {
-        if ($value && preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
+        // Tratar valores vazios
+        if (empty($value) || trim($value) === '') {
+            $this->attributes['data_falecimento'] = null;
+            return;
+        }
+
+        if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
             $date = DateTime::createFromFormat('d/m/Y', $value);
             if ($date) {
                 $this->attributes['data_falecimento'] = $date->format('Y-m-d');
@@ -139,7 +145,13 @@ class Sepultamento extends Model
      */
     public function setDataSepultamentoAttribute($value)
     {
-        if ($value && preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
+        // Tratar valores vazios
+        if (empty($value) || trim($value) === '') {
+            $this->attributes['data_sepultamento'] = null;
+            return;
+        }
+
+        if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
             $date = DateTime::createFromFormat('d/m/Y', $value);
             if ($date) {
                 $this->attributes['data_sepultamento'] = $date->format('Y-m-d');
