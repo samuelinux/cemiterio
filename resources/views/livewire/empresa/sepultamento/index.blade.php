@@ -45,10 +45,10 @@
         <h2 class="text-lg font-semibold text-gray-900">Sepultamentos</h2>
 
         @if ($canCreate)
-            <button type="button" @click="showCreate = true; $wire.create()"
-                class="px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition text-center">
-                Novo Sepultamento
-            </button>
+        <button type="button" @click="showCreate = true; $wire.create()"
+            class="px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition text-center">
+            Novo Sepultamento
+        </button>
         @endif
     </div>
 
@@ -62,7 +62,7 @@
                         wire:click="sortBy('nome_falecido')">
                         Nome
                         @if ($sortField === 'nome_falecido')
-                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                         @endif
                     </th>
 
@@ -70,7 +70,7 @@
                         wire:click="sortBy('data_falecimento')">
                         Falecimento
                         @if ($sortField === 'data_falecimento')
-                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                         @endif
                     </th>
 
@@ -78,12 +78,16 @@
                         wire:click="sortBy('data_sepultamento')">
                         Sepultamento
                         @if ($sortField === 'data_sepultamento')
-                            <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
                         @endif
                     </th>
 
-                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer"
+                        wire:click="sortBy('localizacao_ordenada')">
                         Q / F / C / OS
+                        @if ($sortField === 'localizacao_ordenada')
+                        <span>{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        @endif
                     </th>
 
                     <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">
@@ -94,59 +98,59 @@
 
             <tbody class="divide-y divide-gray-200">
                 @forelse($sepultamentos as $s)
-                    <tr>
-                        <td class="px-3 py-2 text-sm text-gray-900">
-                            <div class="font-medium">{{ $s->nome_falecido }}</div>
-                            <div class="text-xs text-gray-500">{{ $s->numeroFormatado() }}</div>
-                        </td>
-                        <td class="px-3 py-2 text-sm text-gray-600">
-                            {{ $s->data_falecimento ?? '-' }}
-                        </td>
-                        <td class="px-3 py-2 text-sm text-gray-600">
-                            {{ $s->data_sepultamento ?? '-' }}
-                        </td>
-                        <td class="px-3 py-2 text-sm text-gray-600">
-                            {{ $s->quadra ?? '-' }} / {{ $s->fila ?? '-' }} / {{ $s->cova ?? '-' }} /
-                            {{ $s->ordem_sepultamento }}
-                        </td>
+                <tr>
+                    <td class="px-3 py-2 text-sm text-gray-900">
+                        <div class="font-medium">{{ $s->nome_falecido }}</div>
+                        <div class="text-xs text-gray-500">{{ $s->numeroFormatado() }}</div>
+                    </td>
+                    <td class="px-3 py-2 text-sm text-gray-600">
+                        {{ $s->data_falecimento ?? '-' }}
+                    </td>
+                    <td class="px-3 py-2 text-sm text-gray-600">
+                        {{ $s->data_sepultamento ?? '-' }}
+                    </td>
+                    <td class="px-3 py-2 text-sm text-gray-600">
+                        {{ $s->quadra ?? '-' }} / {{ $s->fila ?? '-' }} / {{ $s->cova ?? '-' }} /
+                        {{ $s->ordem_sepultamento }}
+                    </td>
 
-                        <td class="px-3 py-2 text-right">
-                            <div class="inline-flex items-center gap-2">
-                                @if ($s->certidao_obito_path && auth()->user()->hasPermissao('sepultamentos', 'editar'))
-                                    <a href="{{ $s->certidao_obito_url }}" target="_blank"
-                                        class="px-3 py-1.5 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                            class="size-6">
-                                            <path
-                                                d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0 0 16.5 9h-1.875a1.875 1.875 0 0 1-1.875-1.875V5.25A3.75 3.75 0 0 0 9 1.5H5.625Z" />
-                                            <path
-                                                d="M12.971 1.816A5.23 5.23 0 0 1 14.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 0 1 3.434 1.279 9.768 9.768 0 0 0-6.963-6.963Z" />
-                                        </svg>
+                    <td class="px-3 py-2 text-right">
+                        <div class="inline-flex items-center gap-2">
+                            @if ($s->certidao_obito_path && auth()->user()->hasPermissao('sepultamentos', 'editar'))
+                            <a href="{{ $s->certidao_obito_url }}" target="_blank"
+                                class="px-3 py-1.5 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="size-6">
+                                    <path
+                                        d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0 0 16.5 9h-1.875a1.875 1.875 0 0 1-1.875-1.875V5.25A3.75 3.75 0 0 0 9 1.5H5.625Z" />
+                                    <path
+                                        d="M12.971 1.816A5.23 5.23 0 0 1 14.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 0 1 3.434 1.279 9.768 9.768 0 0 0-6.963-6.963Z" />
+                                </svg>
 
-                                    </a>
-                                @endif
-                                @if ($canEdit)
-                                    <button type="button" @click="showEdit = true; $wire.edit({{ $s->id }})"
-                                        class="px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition">
-                                        Editar
-                                    </button>
-                                @endif
-                                @if ($canDelete)
-                                    <button type="button" wire:click="confirmDelete({{ $s->id }})"
-                                        class="px-3 py-1.5 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition">
-                                        Excluir
-                                    </button>
-                                @endif
+                            </a>
+                            @endif
+                            @if ($canEdit)
+                            <button type="button" @click="showEdit = true; $wire.edit({{ $s->id }})"
+                                class="px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition">
+                                Editar
+                            </button>
+                            @endif
+                            @if ($canDelete)
+                            <button type="button" wire:click="confirmDelete({{ $s->id }})"
+                                class="px-3 py-1.5 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition">
+                                Excluir
+                            </button>
+                            @endif
 
-                            </div>
-                        </td>
-                    </tr>
+                        </div>
+                    </td>
+                </tr>
                 @empty
-                    <tr>
-                        <td colspan="5" class="px-3 py-6 text-center text-sm text-gray-500">
-                            Nenhum sepultamento encontrado.
-                        </td>
-                    </tr>
+                <tr>
+                    <td colspan="5" class="px-3 py-6 text-center text-sm text-gray-500">
+                        Nenhum sepultamento encontrado.
+                    </td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
@@ -154,47 +158,48 @@
 
     <div class="space-y-2 md:hidden">
         @forelse($sepultamentos as $s)
-            <div class="border rounded-lg p-3 shadow-sm bg-white">
-                <div class="font-medium text-gray-900">{{ $s->nome_falecido }}</div>
-                <div class="text-xs text-gray-500">{{ $s->numeroFormatado() }}</div>
+        <div class="border rounded-lg p-3 shadow-sm bg-white">
+            <div class="font-medium text-gray-900">{{ $s->nome_falecido }}</div>
+            <div class="text-xs text-gray-500">{{ $s->numeroFormatado() }}</div>
 
-                <div class="mt-1 text-sm text-gray-600">
-                    <div>Falecimento: {{ $s->data_falecimento ?? '-' }}</div>
-                    <div>Sepultamento: {{ $s->data_sepultamento ?? '-' }}</div>
-                    <div>Q: {{ $s->quadra ?? '-' }}/ F: {{ $s->fila ?? '-' }}/ C: {{ $s->cova ?? '-' }}/ OS:
-                        {{ $s->ordem_sepultamento ?? '-' }}</div>
-                </div>
-
-                <div class="mt-3 flex justify-end gap-2">
-                    @if ($s->certidao_obito_path && auth()->user()->hasPermissao('sepultamentos', 'editar'))
-                        <a href="{{ $s->certidao_obito_url }}" target="_blank"
-                            class="px-3 py-1.5 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="size-6">
-                                <path
-                                    d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0 0 16.5 9h-1.875a1.875 1.875 0 0 1-1.875-1.875V5.25A3.75 3.75 0 0 0 9 1.5H5.625Z" />
-                                <path
-                                    d="M12.971 1.816A5.23 5.23 0 0 1 14.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 0 1 3.434 1.279 9.768 9.768 0 0 0-6.963-6.963Z" />
-                            </svg>
-
-                        </a>
-                    @endif
-                    @if ($canEdit)
-                        <button type="button" @click="showEdit = true; $wire.edit({{ $s->id }})"
-                            class="px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition">
-                            Editar
-                        </button>
-                    @endif
-                    @if ($canDelete)
-                        <button type="button" wire:click="confirmDelete({{ $s->id }})"
-                            class="px-3 py-1.5 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition">
-                            Excluir
-                        </button>
-                    @endif
+            <div class="mt-1 text-sm text-gray-600">
+                <div>Falecimento: {{ $s->data_falecimento ?? '-' }}</div>
+                <div>Sepultamento: {{ $s->data_sepultamento ?? '-' }}</div>
+                <div>Q: {{ $s->quadra ?? '-' }}/ F: {{ $s->fila ?? '-' }}/ C: {{ $s->cova ?? '-' }}/ OS:
+                    {{ $s->ordem_sepultamento ?? '-' }}
                 </div>
             </div>
+
+            <div class="mt-3 flex justify-end gap-2">
+                @if ($s->certidao_obito_path && auth()->user()->hasPermissao('sepultamentos', 'editar'))
+                <a href="{{ $s->certidao_obito_url }}" target="_blank"
+                    class="px-3 py-1.5 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                        class="size-6">
+                        <path
+                            d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0 0 16.5 9h-1.875a1.875 1.875 0 0 1-1.875-1.875V5.25A3.75 3.75 0 0 0 9 1.5H5.625Z" />
+                        <path
+                            d="M12.971 1.816A5.23 5.23 0 0 1 14.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 0 1 3.434 1.279 9.768 9.768 0 0 0-6.963-6.963Z" />
+                    </svg>
+
+                </a>
+                @endif
+                @if ($canEdit)
+                <button type="button" @click="showEdit = true; $wire.edit({{ $s->id }})"
+                    class="px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition">
+                    Editar
+                </button>
+                @endif
+                @if ($canDelete)
+                <button type="button" wire:click="confirmDelete({{ $s->id }})"
+                    class="px-3 py-1.5 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition">
+                    Excluir
+                </button>
+                @endif
+            </div>
+        </div>
         @empty
-            <div class="text-center text-sm text-gray-500">Nenhum sepultamento encontrado.</div>
+        <div class="text-center text-sm text-gray-500">Nenhum sepultamento encontrado.</div>
         @endforelse
     </div>
 

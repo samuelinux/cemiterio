@@ -108,11 +108,21 @@ class Index extends Component
 
     public function sortBy($field)
     {
-        if ($this->sortField === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        // Tratar o campo especial de ordenação por localização
+        if ($field === 'localizacao_ordenada') {
+            if ($this->sortField === 'localizacao_ordenada') {
+                $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                $this->sortField = 'localizacao_ordenada';
+                $this->sortDirection = 'asc';
+            }
         } else {
-            $this->sortField = $field;
-            $this->sortDirection = 'asc';
+            if ($this->sortField === $field) {
+                $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                $this->sortField = $field;
+                $this->sortDirection = 'asc';
+            }
         }
     }
 
