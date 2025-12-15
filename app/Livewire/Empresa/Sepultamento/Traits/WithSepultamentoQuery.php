@@ -22,7 +22,7 @@ trait WithSepultamentoQuery
         return Sepultamento::query()
             ->where('empresa_id', $empresaId)
             ->select('sepultamentos.*')
-            ->selectRaw('ROW_NUMBER() OVER (  PARTITION BY empresa_id, quadra, fila, cova    ORDER BY data_sepultamento ASC, id ASC ) as ordem_sepultamento')
+            ->selectRaw('ROW_NUMBER() OVER (  PARTITION BY empresa_id, quadra, fila, cova    ORDER BY data_sepultamento ASC, data_falecimento ASC, id ASC ) as ordem_sepultamento')
 
             // -------------------------
             // Filtros de texto (LIKE)
