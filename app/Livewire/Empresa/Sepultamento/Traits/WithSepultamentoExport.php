@@ -38,10 +38,8 @@ trait WithSepultamentoExport
                     'fila' => $sepultamento->fila ?? '-',
                     'cova' => $sepultamento->cova ?? '-',
                     'ordem_sepultamento' => $sepultamento->ordem_sepultamento, // 👈 incluído aqui
-                    'data_falecimento' => $sepultamento->data_falecimento
-                        ? \Carbon\Carbon::parse($sepultamento->data_falecimento)->format('d/m/Y') : '-',
-                    'data_sepultamento' => $sepultamento->data_sepultamento
-                        ? \Carbon\Carbon::parse($sepultamento->data_sepultamento)->format('d/m/Y') : '-',
+                    'data_falecimento' => $sepultamento->data_falecimento ?? '-',  // Removido o Carbon::parse
+                    'data_sepultamento' => $sepultamento->data_sepultamento ?? '-', // Removido o Carbon::parse
                     'ativo' => $sepultamento->ativo ? 'Sim' : 'Não',
                     'indigente' => $sepultamento->indigente ? 'Sim' : 'Não',
                     'natimorto' => $sepultamento->natimorto ? 'Sim' : 'Não',
